@@ -1,32 +1,22 @@
 ## Introduction
-This repository contains kyber network smart contracts.
-For more details, please visit our [developer portal](https://developer.kyber.network/)
+This specific branch is for mutation testing.
 
-## Setup
-1. Clone this repo
-2. `npm ci`
+## Instructions
+1. Install eth_vertigo: `pip3 install eth_vertigo`
+2. Install ganache-cli (if not installed already): `npm i ganache-cli`
+3. Clone this repo
+4. `cd ./PermissionGroups`
+5. `npm ci`
+6. Spawn 5 ganache-cli instances in 5 separate terminals / tabs: 
+    ```
+    ganache-cli -l 8000000 -e 1000 -p 8545
+    ganache-cli -l 8000000 -e 1000 -p 8546
+    ganache-cli -l 8000000 -e 1000 -p 8547
+    ganache-cli -l 8000000 -e 1000 -p 8548
+    ganache-cli -l 8000000 -e 1000 -p 8549
+    ```
+7. Run `vertigo run --network mutNet1 --network mutNet2 --network mutNet3 --network mutNet4 --network mutNet5 --output mutOutput.txt`
 
-## Compilation with Buidler
-1. `./cmp.sh` to compile both sol4 and sol5 contracts
-2. `./cmpSol5.sh` to compile only sol5 contracts
-
-## Testing with Buidler
-1. If contracts have not been compiled, run `./compilation.sh`. This step can be skipped subsequently.
-2. Run `./tst.sh`
-3. Use `-f` for running a specific test file.
-5. Use `-a` to run both sol4 and sol5 tests. Runs only sol5 tests by default.
-
-### Example Commands
-`./tst.sh` (Run only sol5 tests)
-`./tst.sh -f ./test/kyberReserve.js` (Test only kyberReserve.js)
-`./tst.sh -a` (Run both sol4 and sol5 tests)
-
-### Example
-`npx buidler test --no-compile ./test/kyberNetwork.js`
-
-## Coverage with `buidler-coverage`
-1. Run `./coverage.sh`
-2. Use `-f` for running a specific test file.
-
-### Example Commands
-`./coverage.sh -f ./test/sol5/kyberNetwork.js` (Coverage for only kyberNetwork.js)
+## Notes
+- Later versions of Truffle (>= 4.1.15) break the `beforeAll` hook. That's why specific truffle version must be used.
+- If any port number needs to be changed, edit the port number in `truffle-config.js` as well.

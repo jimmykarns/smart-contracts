@@ -30,6 +30,7 @@
     "sha3": "2.1.1",
     "solc": "0.5.11",
     "solhint": "1.4.0",
+    "truffle": "5.1.14",
     "truffle-assertions": "0.7.2",
     "truffle-flattener": "1.4.2",
     "web3": "1.2.4",

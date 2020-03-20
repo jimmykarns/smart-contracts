@@ -1,9 +1,9 @@
-pragma solidity ^0.4.18;
+pragma solidity 0.5.11;
+
+import "../utils/Withdrawable2.sol";
 
 
-import "../Withdrawable.sol";
-
-
-contract MockWithdrawable is Withdrawable {
-    function () public payable { }
+contract MockWithdrawable2 is Withdrawable2 {
+    constructor() public Withdrawable2(msg.sender) {}
+    function () external payable {}
 }
