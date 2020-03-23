@@ -41,6 +41,36 @@ module.exports = {
       port: 8549,
       network_id: "*",
       gas: 8000000
+    },
+    mutNet6: {
+      host: "127.0.0.1",
+      port: 8550,
+      network_id: "*",
+      gas: 8000000
+    },
+    mutNet7: {
+      host: "127.0.0.1",
+      port: 8551,
+      network_id: "*",
+      gas: 8000000
+    },
+    mutNet8: {
+      host: "127.0.0.1",
+      port: 8552,
+      network_id: "*",
+      gas: 8000000
+    },
+    mutNet9: {
+      host: "127.0.0.1",
+      port: 8553,
+      network_id: "*",
+      gas: 8000000
+    },
+    mutNet10: {
+      host: "127.0.0.1",
+      port: 8554,
+      network_id: "*",
+      gas: 8000000
     }
   },
 
@@ -54,5 +84,9 @@ module.exports = {
         }
       }
     }
+  },
+
+  mocha: {
+    enableTimeouts: false
   }
 };
