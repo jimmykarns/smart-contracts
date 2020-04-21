@@ -1,67 +1,38 @@
-
-pragma  solidity 0.5.11;
+pragma solidity 0.5.11;
 
 import "./IKyberReserve.sol";
 import "./IKyberNetwork.sol";
+import "./IKyberStorage.sol";
 
 
 interface IKyberMatchingEngine {
+    enum ProcessWithRate {NotRequired, Required}
 
-    enum ReserveType {
-        NONE,
-        FPR,
-        APR,
-        BRIDGE,
-        UTILITY,
-        CUSTOM,
-        ORDERBOOK,
-        LAST
-    }
+    function setNegligbleRateDiffBps(uint256 _negligibleRateDiffBps) external returns (bool);
 
-    enum ResultIndex {
-        t2eNumReserves,
-        tradeWei,
-        numFeePayingReserves,
-        feePayingReservesBps,
-        destAmountNoFee,
-        destAmountWithNetworkFee,
-        actualDestAmount,
-        resultLength
-    }
+    function setKyberStorage(IKyberStorage _kyberStorage) external returns (bool);
 
-    enum InfoIndex {
-        srcAmount,
-        networkFeeBps,
-        platformFeeBps,
-        infoLength
-    }
+    function getNegligibleRateDiffBps() external view returns (uint256);
 
-    function negligibleRateDiffBps() external view returns (uint);
-
-    function setNegligbleRateDiffBps(uint _negligibleRateDiffBps) external returns (bool);
-
-    function addReserve(address reserve, bytes8 reserveId, ReserveType resType) external returns (bool);
-
-    function removeReserve(address reserve) external returns (bytes8);
-
-    function listPairForReserve(IKyberReserve reserve, IERC20 token, bool ethToToken, bool tokenToEth, bool add)
+    function getTradingReserves(
+        IERC20 src,
+        IERC20 dest,
+        bool isTokenToToken,
+        bytes calldata hint
+    )
         external
-        returns (bool);
-
-    function calcRatesAndAmounts(IERC20 src, IERC20 dest, uint srcDecimals, uint destDecimals, uint[] calldata info, bytes calldata hint)
-        external view
+        view
         returns (
-            uint[] memory results,
-            IKyberReserve[] memory reserveAddresses,
-            uint[] memory rates,
-            uint[] memory splitValuesBps,
-            bool[] memory isFeePaying,
-            bytes8[] memory ids
+            bytes32[] memory reserveIds,
+            uint256[] memory splitValuesBps,
+            ProcessWithRate processWithRate
         );
 
-    function getReserveDetails(address reserve) external view
-        returns(bytes8 reserveId, ReserveType resType, bool isFeePaying);
-
-    function getReservesPerTokenSrc(IERC20 token) external view returns(IKyberReserve[] memory reserves);
-    function getReservesPerTokenDest(IERC20 token) external view returns(IKyberReserve[] memory reserves);
+    function doMatch(
+        IERC20 src,
+        IERC20 dest,
+        uint256[] calldata srcAmounts,
+        uint256[] calldata feesAccountedDestBps,
+        uint256[] calldata rates
+    ) external view returns (uint256[] memory reserveIndexes);
 }

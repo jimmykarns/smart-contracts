@@ -1,74 +1,71 @@
 pragma solidity 0.5.11;
 
+import "./IKyberReserve.sol";
+
 
 interface IKyberHint {
-
-    enum TradeType {
-        MaskIn,
-        MaskOut,
-        Split
+    enum TradeType {MaskIn, MaskOut, Split}
+    enum HintErrors {
+        NoError,
+        ReserveIdDupError,
+        ReserveIdEmptyError,
+        ReserveIdSplitsError,
+        SplitsNotEmptyError,
+        TotalBPSError
     }
-
-    function parseEthToTokenHint(bytes calldata hint)
-        external
-        view
-        returns(
-            TradeType ethToTokenType,
-            bytes8[] memory ethToTokenReserveIds,
-            uint[] memory ethToTokenSplits,
-            uint failedIndex
-        );
 
     function parseTokenToEthHint(bytes calldata hint)
         external
         view
-        returns(
+        returns (
             TradeType tokenToEthType,
-            bytes8[] memory tokenToEthReserveIds,
-            uint[] memory tokenToEthSplits,
-            uint failedIndex
+            bytes32[] memory tokenToEthReserveIds,
+            IKyberReserve[] memory tokenToEthAddresses,
+            uint256[] memory tokenToEthSplits
+        );
+
+    function parseEthToTokenHint(bytes calldata hint)
+        external
+        view
+        returns (
+            TradeType ethToTokenType,
+            bytes32[] memory ethToTokenReserveIds,
+            IKyberReserve[] memory ethToTokenAddresses,
+            uint256[] memory ethToTokenSplits
         );
 
     function parseTokenToTokenHint(bytes calldata hint)
         external
         view
-        returns(
+        returns (
             TradeType tokenToEthType,
-            bytes8[] memory tokenToEthReserveIds,
-            uint[] memory tokenToEthSplits,
+            bytes32[] memory tokenToEthReserveIds,
+            IKyberReserve[] memory tokenToEthAddresses,
+            uint256[] memory tokenToEthSplits,
             TradeType ethToTokenType,
-            bytes8[] memory ethToTokenReserveIds,
-            uint[] memory ethToTokenSplits,
-            uint failedIndex
+            bytes32[] memory ethToTokenReserveIds,
+            IKyberReserve[] memory ethToTokenAddresses,
+            uint256[] memory ethToTokenSplits
         );
-
-    function buildEthToTokenHint(
-        TradeType ethToTokenType,
-        bytes8[] calldata ethToTokenReserveIds,
-        uint[] calldata ethToTokenSplits
-    )
-        external
-        pure
-        returns(bytes memory hint);
 
     function buildTokenToEthHint(
         TradeType tokenToEthType,
-        bytes8[] calldata tokenToEthReserveIds,
-        uint[] calldata tokenToEthSplits
-    )
-        external
-        pure
-        returns(bytes memory hint);
+        bytes32[] calldata tokenToEthReserveIds,
+        uint256[] calldata tokenToEthSplits
+    ) external pure returns (bytes memory hint);
+
+    function buildEthToTokenHint(
+        TradeType ethToTokenType,
+        bytes32[] calldata ethToTokenReserveIds,
+        uint256[] calldata ethToTokenSplits
+    ) external pure returns (bytes memory hint);
 
     function buildTokenToTokenHint(
         TradeType tokenToEthType,
-        bytes8[] calldata tokenToEthReserveIds,
-        uint[] calldata tokenToEthSplits,
+        bytes32[] calldata tokenToEthReserveIds,
+        uint256[] calldata tokenToEthSplits,
         TradeType ethToTokenType,
-        bytes8[] calldata ethToTokenReserveIds,
-        uint[] calldata ethToTokenSplits
-    )
-        external
-        pure
-        returns(bytes memory hint);
+        bytes32[] calldata ethToTokenReserveIds,
+        uint256[] calldata ethToTokenSplits
+    ) external pure returns (bytes memory hint);
 }

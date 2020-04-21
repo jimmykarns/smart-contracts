@@ -4,90 +4,112 @@ import "../IKyberDAO.sol";
 import "../utils/Utils4.sol";
 import "../IKyberFeeHandler.sol";
 
+
 contract MockDAO is IKyberDAO, Utils4 {
-
     IKyberFeeHandler public feeHandler;
-    uint public rewardInBPS;
-    uint public rebateInBPS;
-    uint public epoch;
-    uint public expiryBlockNumber;
-    uint public feeBps;
-    uint public epochPeriod = 10;
-    uint public startBlock;
-    uint data;
-    mapping(uint => bool) public shouldBurnRewardEpoch;
+    uint256 public rewardInBPS;
+    uint256 public rebateInBPS;
+    uint256 public epoch;
+    uint256 public expiryTimestamp;
+    uint256 public feeBps;
+    uint256 public epochPeriod = 160;
+    uint256 public startTimestamp;
+    uint256 data;
+    mapping(uint256 => bool) public shouldBurnRewardEpoch;
 
-    constructor(uint _rewardInBPS, uint _rebateInBPS, uint _epoch, uint _expiryBlockNumber) public {
+    constructor(
+        uint256 _rewardInBPS,
+        uint256 _rebateInBPS,
+        uint256 _epoch,
+        uint256 _expiryTimestamp
+    ) public {
         rewardInBPS = _rewardInBPS;
         rebateInBPS = _rebateInBPS;
         epoch = _epoch;
-        expiryBlockNumber = _expiryBlockNumber;
-        startBlock = block.number;
+        expiryTimestamp = _expiryTimestamp;
+        startTimestamp = now;
+    }
 
+    function getLatestNetworkFeeDataWithCache() external returns (uint256, uint256) {
+        data++;
+        return (feeBps, expiryTimestamp);
+    }
+
+    function getLatestBRRDataWithCache()
+        external
+        returns (
+            uint256,
+            uint256,
+            uint256,
+            uint256,
+            uint256
+        )
+    {
+        return (BPS - rewardInBPS - rebateInBPS, rewardInBPS, rebateInBPS, epoch, expiryTimestamp);
+    }
+
+    function claimReward(address, uint256) external {}
+
+    function claimStakerReward(
+        address staker,
+        uint256 percentageInPrecision,
+        uint256 forEpoch
+    ) external returns (bool) {
+        return feeHandler.claimStakerReward(staker, percentageInPrecision, forEpoch);
+    }
+
+    function handleWithdrawal(address staker, uint256 reduceAmount) external {
+        staker;
+        reduceAmount;
+    }
+
+    function vote(uint256 campaignID, uint256 option) external {
+        // must implement so it can be deployed.
+        campaignID;
+        option;
+    }
+
+    function epochPeriodInSeconds() external view returns (uint256) {
+        return epochPeriod;
+    }
+
+    function firstEpochStartTimestamp() external view returns (uint256) {
+        return startTimestamp;
+    }
+
+    function getLatestNetworkFeeData() external view returns (uint256, uint256) {
+        return (feeBps, expiryTimestamp);
+    }
+
+    function shouldBurnRewardForEpoch(uint256 epochNum) external view returns (bool) {
+        if (shouldBurnRewardEpoch[epochNum]) return true;
+        return false;
+    }
+
+    function advanceEpoch() public {
+        epoch++;
+        expiryTimestamp = now + epochPeriod;
     }
 
     function setFeeHandler(IKyberFeeHandler _handler) public {
         feeHandler = _handler;
     }
 
-    function setMockEpochAndExpiryBlock(uint _epoch, uint _expiryBlockNumber) public {
-        epoch = _epoch;
-        expiryBlockNumber = _expiryBlockNumber;
+    function setShouldBurnRewardTrue(uint256 epochNum) public {
+        shouldBurnRewardEpoch[epochNum] = true;
     }
 
-    function setMockBRR(uint _rewardInBPS, uint _rebateInBPS) public {
+    function setMockEpochAndExpiryTimestamp(uint256 _epoch, uint256 _expiryTimestamp) public {
+        epoch = _epoch;
+        expiryTimestamp = _expiryTimestamp;
+    }
+
+    function setMockBRR(uint256 _rewardInBPS, uint256 _rebateInBPS) public {
         rewardInBPS = _rewardInBPS;
         rebateInBPS = _rebateInBPS;
     }
 
-    function setNetworkFeeBps(uint _feeBps) public {
+    function setNetworkFeeBps(uint256 _feeBps) public {
         feeBps = _feeBps;
-    }
-
-    function getLatestNetworkFeeData() external view returns(uint, uint) {
-        return (feeBps, expiryBlockNumber);
-    }
-
-    function getLatestNetworkFeeDataWithCache() external returns(uint feeInBps, uint expiryBlock) {
-        data++;
-        return (feeBps, expiryBlock);
-    }
-
-    function getLatestBRRData() external returns(uint, uint, uint, uint, uint) {
-        return (BPS - rewardInBPS - rebateInBPS, rewardInBPS, rebateInBPS, epoch, expiryBlockNumber);
-    }
-
-    function claimStakerReward(address staker, uint percentageInPrecision, uint forEpoch) 
-        external returns(bool)
-    {
-        return feeHandler.claimStakerReward(staker, percentageInPrecision, forEpoch);
-    }
-
-    function EPOCH_PERIOD_BLOCKS() external view returns(uint) {
-        return epochPeriod;
-    }
-
-    function FIRST_EPOCH_START_BLOCK() external view returns(uint) {
-        return startBlock;
-    }
-
-    function handleWithdrawal(address staker, uint reduceAmount) external returns(bool) {
-        staker;
-        reduceAmount;
-        return true;
-    }
-
-    function shouldBurnRewardForEpoch(uint epochNum) external view returns(bool) {
-        if (shouldBurnRewardEpoch[epochNum]) return true;
-        return false;
-    }
-
-    function setShouldBurnRewardTrue(uint epochNum) public {
-        shouldBurnRewardEpoch[epochNum] = true;
-    }
-
-    function advanceEpoch() public {
-        epoch++;
-        expiryBlockNumber = block.number + epochPeriod;
     }
 }
