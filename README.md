@@ -23,27 +23,16 @@ This specific branch is for mutation testing.
 4. `cd ./PermissionGroups`
 5. `npm ci`
 6. `npx truffle compile`
-7. Spawn 5 ganache-cli instances in 10 separate terminals / tabs: 
+7. Spawn buidler node in a separate terminal: 
     ```
-    ganache-cli -l 8000000 -e 1000000 -p 8545
-    ganache-cli -l 8000000 -e 1000000 -p 8546
-    ganache-cli -l 8000000 -e 1000000 -p 8547
-    ganache-cli -l 8000000 -e 1000000 -p 8548
-    ganache-cli -l 8000000 -e 1000000 -p 8549
-    ganache-cli -l 8000000 -e 1000000 -p 8550
-    ganache-cli -l 8000000 -e 1000000 -p 8551
-    ganache-cli -l 8000000 -e 1000000 -p 8552
-    ganache-cli -l 8000000 -e 1000000 -p 8553
-    ganache-cli -l 8000000 -e 1000000 -p 8554
+    npx buidler node
     ```
 8. Run 
     ```
     vertigo run 
-    --network mutNet1 --network mutNet2 --network mutNet3 --network mutNet4 --network mutNet5 
-    --network mutNet6 --network mutNet7 --network mutNet8 --network mutNet9 --network mutNet10
-    --output mutOutput.txt
+    --network mutNet1 --output mutOutput.txt
     ```
 
 ## Notes
 - Later versions of Truffle (>= 4.1.15) break the `beforeAll` hook. That's why specific truffle version must be used.
-- If any port number needs to be changed, edit the port number in `truffle-config.js` as well.
+- ~~If any port number needs to be changed, edit the port number in `truffle-config.js` as well.~~
