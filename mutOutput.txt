@@ -1,0 +1,1160 @@
+Mutation testing report:
+Number of mutations:    105
+Killed:                 33 / 105
+
+Mutations:
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/KyberNetwork.sol
+    Line nr: 1215
+    Result: Killed
+    Original line:
+                         : (destAmount * currentSrcAmount * reservesData.rates[i]) /
+
+    Mutated line:
+                         : (destAmount / currentSrcAmount * reservesData.rates[i]) /
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/Dao/KyberStaking.sol
+    Line nr: 64
+    Result: Killed
+    Original line:
+                 require(_daoAddress != address(0), "updateDAO: DAO address is missing");
+
+    Mutated line:
+                 require(_daoAddress == address(0), "updateDAO: DAO address is missing");
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/KyberNetwork.sol
+    Line nr: 1041
+    Result: Killed
+    Original line:
+                     require(msg.value == input.srcAmount, "bad eth qty");
+
+    Mutated line:
+                     require(msg.value != input.srcAmount, "bad eth qty");
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/bridges/eth2dai/Eth2DaiReserve.sol
+    Line nr: 816
+    Result: Killed
+    Original line:
+                 data |= (traverseX & (POW_2_32 - 1)) * POW_2_96 * POW_2_32 * POW_2_32;
+
+    Mutated line:
+                 data |= (traverseX & (POW_2_32 - 1)) * POW_2_96 / POW_2_32 * POW_2_32;
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/mock/Token.sol
+    Line nr: 26
+    Result: Lived
+    Original line:
+                 require(a == b * c + (a % b), "div failed");
+
+    Mutated line:
+                 require(a == b / c + (a % b), "div failed");
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/Dao/KyberDAO.sol
+    Line nr: 845
+    Result: Killed
+    Original line:
+                 require(option <= campaign.options.length, "vote: option is not in range");
+
+    Mutated line:
+                 require(option > campaign.options.length, "vote: option is not in range");
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/bridges/eth2dai/Eth2DaiReserve.sol
+    Line nr: 775
+    Result: Killed
+    Original line:
+                 maxTokenBal = (data / (POW_2_32 * POW_2_32)) & (POW_2_96 - 1);
+
+    Mutated line:
+                 maxTokenBal = (data / (POW_2_32 * POW_2_32)) | (POW_2_96 - 1);
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/Dao/KyberDAO.sol
+    Line nr: 304
+    Result: Killed
+    Original line:
+                     require(brrCampaigns[campEpoch] == 0, "newCampaign: already had brr for this epoch");
+
+    Mutated line:
+                     require(brrCampaigns[campEpoch] != 0, "newCampaign: already had brr for this epoch");
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/Dao/KyberDAO.sol
+    Line nr: 404
+    Result: Killed
+    Original line:
+                 uint256 totalStake = dAddress == staker ? stake.add(dStake) : dStake;
+
+    Mutated line:
+                 uint256 totalStake = dAddress != staker ? stake.add(dStake) : dStake;
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/mock/TestTokenNotReturn.sol
+    Line nr: 46
+    Result: Lived
+    Original line:
+                 return a < b ? a : b;
+
+    Mutated line:
+                 return a <= b ? a : b;
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/Dao/KyberFeeHandler.sol
+    Line nr: 144
+    Result: Killed
+    Original line:
+                 require(address(_networkProxy) != address(0), "KyberNetworkProxy 0");
+
+    Mutated line:
+                 require(address(_networkProxy) == address(0), "KyberNetworkProxy 0");
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/Dao/KyberDAO.sol
+    Line nr: 781
+    Result: Killed
+    Original line:
+                             options[i] < BPS / 2,
+
+    Mutated line:
+                             options[i] <= BPS / 2,
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/Dao/KyberFeeHandler.sol
+    Line nr: 520
+    Result: Killed
+    Original line:
+                 for (uint256 i = 0; i < rebateWallets.length; i++) {
+
+    Mutated line:
+                 for (uint256 i = 0; i >= rebateWallets.length; i++) {
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/bridges/eth2dai/mock/MockOtcOrderbook.sol
+    Line nr: 100
+    Result: Killed
+    Original line:
+                 buy(offerBuyGem, takerPayAmount, offerPayGem, takerBuyAmount);
+
+    Mutated line:
+                 
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/bridges/eth2dai/Eth2DaiReserve.sol
+    Line nr: 395
+    Result: Killed
+    Original line:
+                         require(msg.value == 0, "doTrade: msg.value must be 0");
+
+    Mutated line:
+                         require(msg.value != 0, "doTrade: msg.value must be 0");
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/Dao/KyberFeeHandler.sol
+    Line nr: 142
+    Result: Killed
+    Original line:
+             ) public BurnConfigPermission(_burnConfigSetter) {
+
+    Mutated line:
+             ) public  {
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/bridges/eth2dai/Eth2DaiReserve.sol
+    Line nr: 466
+    Result: Killed
+    Original line:
+                     if (offers[i].id == 0 || remainingSrcAmount == 0) { break; }
+
+    Mutated line:
+                     if (offers[i].id != 0 || remainingSrcAmount == 0) { break; }
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/mock/Token.sol
+    Line nr: 19
+    Result: Lived
+    Original line:
+                 require(a == 0 || c / a == b, "mul overflow");
+
+    Mutated line:
+                 require(a == 0 || c * a == b, "mul overflow");
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/bridges/eth2dai/mock/MockOtcOrderbook.sol
+    Line nr: 79
+    Result: Killed
+    Original line:
+                         if (i + 1 < buyOffers.length) {
+
+    Mutated line:
+                         if (i + 1 <= buyOffers.length) {
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/mock/Token.sol
+    Line nr: 19
+    Result: Lived
+    Original line:
+                 require(a == 0 || c / a == b, "mul overflow");
+
+    Mutated line:
+                 require(a == 0 || c / a != b, "mul overflow");
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/Dao/KyberFeeHandler.sol
+    Line nr: 452
+    Result: Killed
+    Original line:
+                     require(burnBps + rewardBps + rebateBps == BPS, "Bad BRR values");
+
+    Mutated line:
+                     require(burnBps - rewardBps + rebateBps == BPS, "Bad BRR values");
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/bridges/eth2dai/Eth2DaiReserve.sol
+    Line nr: 789
+    Result: Killed
+    Original line:
+                 data |= (ethSize & (POW_2_96 * POW_2_96 - 1)) * POW_2_32 * POW_2_32;
+
+    Mutated line:
+                 data |= (ethSize & (POW_2_96 * POW_2_96 + 1)) * POW_2_32 * POW_2_32;
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/Dao/KyberDAO.sol
+    Line nr: 586
+    Result: Killed
+    Original line:
+                         winningOption = i + 1;
+
+    Mutated line:
+                         winningOption = i - 1;
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/mock/Token.sol
+    Line nr: 19
+    Result: Lived
+    Original line:
+                 require(a == 0 || c / a == b, "mul overflow");
+
+    Mutated line:
+                 require(a == 0 || c / a != b, "mul overflow");
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/bridges/eth2dai/Eth2DaiReserve.sol
+    Line nr: 264
+    Result: Killed
+    Original line:
+                 require(minToken < POW_2_96/2, "setInternalInventoryData: minToken > 2**95");
+
+    Mutated line:
+                 require(minToken >= POW_2_96/2, "setInternalInventoryData: minToken > 2**95");
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/Dao/KyberDAO.sol
+    Line nr: 687
+    Result: Killed
+    Original line:
+                 if (points > totalPts) {
+
+    Mutated line:
+                 if (points <= totalPts) {
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/bridges/eth2dai/mock/MockOtcOrderbook.sol
+    Line nr: 78
+    Result: Killed
+    Original line:
+                     if (buyOffers[i].id == id) {
+
+    Mutated line:
+                     if (buyOffers[i].id != id) {
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/Dao/KyberFeeHandler.sol
+    Line nr: 170
+    Result: Killed
+    Original line:
+                 require(tx.origin == msg.sender, "only non-contract");
+
+    Mutated line:
+                 require(tx.origin != msg.sender, "only non-contract");
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/Dao/KyberDAO.sol
+    Line nr: 304
+    Result: Killed
+    Original line:
+                     require(brrCampaigns[campEpoch] == 0, "newCampaign: already had brr for this epoch");
+
+    Mutated line:
+                     require(brrCampaigns[campEpoch] != 0, "newCampaign: already had brr for this epoch");
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/KyberNetwork.sol
+    Line nr: 395
+    Result: Killed
+    Original line:
+                 if (src == dest) return (0, 0, 0);
+
+    Mutated line:
+                 if (src != dest) return (0, 0, 0);
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/bridges/eth2dai/Eth2DaiReserve.sol
+    Line nr: 816
+    Result: Killed
+    Original line:
+                 data |= (traverseX & (POW_2_32 - 1)) * POW_2_96 * POW_2_32 * POW_2_32;
+
+    Mutated line:
+                 data |= (traverseX & (POW_2_32 - 1)) * POW_2_96 / POW_2_32 * POW_2_32;
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/KyberNetwork.sol
+    Line nr: 1122
+    Result: Killed
+    Original line:
+                 uint256 destDecimals = (src == ETH_TOKEN_ADDRESS) ? reservesData.decimals : ETH_DECIMALS;
+
+    Mutated line:
+                 uint256 destDecimals = (src != ETH_TOKEN_ADDRESS) ? reservesData.decimals : ETH_DECIMALS;
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/mock/ReentrancyMock.sol
+    Line nr: 18
+    Result: Killed
+    Original line:
+                 if (n > 0) {
+
+    Mutated line:
+                 if (n >= 0) {
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/Dao/KyberDAO.sol
+    Line nr: 313
+    Result: Killed
+    Original line:
+                 if (campaignType == CampaignType.NetworkFee) {
+
+    Mutated line:
+                 if (campaignType != CampaignType.NetworkFee) {
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/bridges/eth2dai/Eth2DaiReserve.sol
+    Line nr: 812
+    Result: Killed
+    Original line:
+                 data |= (minSizeX & (POW_2_32 - 1)) * POW_2_32;
+
+    Mutated line:
+                 data |= (minSizeX & (POW_2_32 + 1)) * POW_2_32;
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/bridges/eth2dai/Eth2DaiReserve.sol
+    Line nr: 512
+    Result: Killed
+    Original line:
+                     if (address(this).balance < ethVal) { return (shouldUse, premiumBps); }
+
+    Mutated line:
+                     if (address(this).balance >= ethVal) { return (shouldUse, premiumBps); }
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/KyberMatchingEngine.sol
+    Line nr: 179
+    Result: Killed
+    Original line:
+                 bestReserve.destAmount = (bestReserve.destAmount * BPS) / (BPS + negligibleRateDiffBps);
+
+    Mutated line:
+                 bestReserve.destAmount = (bestReserve.destAmount / BPS) / (BPS + negligibleRateDiffBps);
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/Dao/KyberDAO.sol
+    Line nr: 183
+    Result: Killed
+    Original line:
+                 require(_defaultRewardBps.add(_defaultRebateBps) <= BPS, "reward plus rebate high");
+
+    Mutated line:
+                 require(_defaultRewardBps.add(_defaultRebateBps) < BPS, "reward plus rebate high");
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/mock/TokenNoDecimal.sol
+    Line nr: 34
+    Result: Error
+    Original line:
+                 return a - b;
+
+    Mutated line:
+                 return a + b;
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/mock/MaliciousReserve.sol
+    Line nr: 37
+    Result: Error
+    Original line:
+                 require(msg.value == srcAmount, "ETH sent != srcAmount");
+
+    Mutated line:
+                 require(msg.value != srcAmount, "ETH sent != srcAmount");
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/Dao/KyberStaking.sol
+    Line nr: 109
+    Result: Error
+    Original line:
+                     assert(stakerLatestData[curDAddr].delegatedStake >= updatedStake);
+
+    Mutated line:
+                     assert(stakerLatestData[curDAddr].delegatedStake < updatedStake);
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/Dao/KyberStaking.sol
+    Line nr: 303
+    Result: Error
+    Original line:
+                 if (epoch > curEpoch + 1) {
+
+    Mutated line:
+                 if (epoch > curEpoch - 1) {
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/KyberHintHandler.sol
+    Line nr: 278
+    Result: Error
+    Original line:
+                 if (error == HintErrors.TotalBPSError) revert("total BPS != 10000");
+
+    Mutated line:
+                 if (error != HintErrors.TotalBPSError) revert("total BPS != 10000");
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/bridges/eth2dai/Eth2DaiReserve.sol
+    Line nr: 807
+    Result: Error
+    Original line:
+                 require(takeY < POW_2_32, "encodeFactorData: takeY is too big");
+
+    Mutated line:
+                 require(takeY <= POW_2_32, "encodeFactorData: takeY is too big");
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/mock/TestTokenNotReturn.sol
+    Line nr: 19
+    Result: Error
+    Original line:
+                 require(a == 0 || c / a == b);
+
+    Mutated line:
+                 require(a == 0 || c * a == b);
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/mock/Token.sol
+    Line nr: 119
+    Result: Lived
+    Original line:
+             function transfer(address _to, uint256 _value) public onlyPayloadSize(2 * 32) returns (bool) {
+
+    Mutated line:
+             function transfer(address _to, uint256 _value) public onlyPayloadSize(2 / 32) returns (bool) {
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/KyberNetwork.sol
+    Line nr: 693
+    Result: Error
+    Original line:
+                         tradeData.tradeWei - tradeData.networkFeeWei - tradeData.platformFeeWei,
+
+    Mutated line:
+                         tradeData.tradeWei + tradeData.networkFeeWei - tradeData.platformFeeWei,
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/bridges/eth2dai/Eth2DaiReserve.sol
+    Line nr: 709
+    Result: Error
+    Original line:
+                 if (bid.id == 0 || ask.id == 0 || bid.buyAmount > MAX_QTY || bid.payAmount > MAX_QTY || ask.buyAmount > MAX_QTY || ask.payAmount > MAX_QTY) {
+
+    Mutated line:
+                 if (bid.id == 0 || ask.id == 0 || bid.buyAmount >= MAX_QTY || bid.payAmount > MAX_QTY || ask.buyAmount > MAX_QTY || ask.payAmount > MAX_QTY) {
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/bridges/eth2dai/Eth2DaiReserve.sol
+    Line nr: 805
+    Result: Error
+    Original line:
+                 require(minSizeY < POW_2_32, "encodeFactorData: minSizeY is too big");
+
+    Mutated line:
+                 require(minSizeY <= POW_2_32, "encodeFactorData: minSizeY is too big");
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/bridges/bancor/mock/MockBancorNetwork.sol
+    Line nr: 113
+    Result: Error
+    Original line:
+                 require(destAmount <= address(this).balance);
+
+    Mutated line:
+                 require(destAmount < address(this).balance);
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/KyberMatchingEngine.sol
+    Line nr: 161
+    Result: Error
+    Original line:
+                     destAmount = (srcAmounts[i] * rates[i] * (BPS - feesAccountedDestBps[i])) / BPS;
+
+    Mutated line:
+                     destAmount = (srcAmounts[i] / rates[i] * (BPS - feesAccountedDestBps[i])) / BPS;
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/mock/MockGasHelper.sol
+    Line nr: 21
+    Result: Error
+    Original line:
+                 require(platformWallet == _platformWallet);
+
+    Mutated line:
+                 require(platformWallet != _platformWallet);
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/Dao/KyberFeeHandler.sol
+    Line nr: 447
+    Result: Error
+    Original line:
+                 if (now > expiryTimestamp && kyberDAO != IKyberDAO(0)) {
+
+    Mutated line:
+                 if (now <= expiryTimestamp && kyberDAO != IKyberDAO(0)) {
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/mock/GasHelper.sol
+    Line nr: 44
+    Result: Error
+    Original line:
+                 freeGas(gasleft() / 2);
+
+    Mutated line:
+                 freeGas(gasleft() * 2);
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/Dao/KyberDAO.sol
+    Line nr: 775
+    Result: Error
+    Original line:
+                 } else if (campaignType == CampaignType.NetworkFee) {
+
+    Mutated line:
+                 } else if (campaignType != CampaignType.NetworkFee) {
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/Dao/KyberFeeHandler.sol
+    Line nr: 189
+    Result: Error
+    Original line:
+                 require(msg.value >= platformFeeWei, "msg.value low");
+
+    Mutated line:
+                 require(msg.value < platformFeeWei, "msg.value low");
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/mock/SimpleKyberProxy.sol
+    Line nr: 117
+    Result: Error
+    Original line:
+                     srcAmount = srcAmount - networkFeeWei - platformFeeWei;
+
+    Mutated line:
+                     srcAmount = srcAmount + networkFeeWei - platformFeeWei;
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/bridges/eth2dai/Eth2DaiReserve.sol
+    Line nr: 785
+    Result: Error
+    Original line:
+                 require(maxTraverse < POW_2_32, "encodeTokenBasicData: maxTraverse is too big");
+
+    Mutated line:
+                 require(maxTraverse <= POW_2_32, "encodeTokenBasicData: maxTraverse is too big");
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/Dao/KyberDAO.sol
+    Line nr: 404
+    Result: Error
+    Original line:
+                 uint256 totalStake = dAddress == staker ? stake.add(dStake) : dStake;
+
+    Mutated line:
+                 uint256 totalStake = dAddress != staker ? stake.add(dStake) : dStake;
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/utils/Utils4.sol
+    Line nr: 138
+    Result: Error
+    Original line:
+                     return ((destAmount * PRECISION) / ((10**(dstDecimals - srcDecimals)) * srcAmount));
+
+    Mutated line:
+                     return ((destAmount / PRECISION) / ((10**(dstDecimals - srcDecimals)) * srcAmount));
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/bridges/eth2dai/Eth2DaiReserve.sol
+    Line nr: 541
+    Result: Error
+    Original line:
+                 require(val <= MAX_QTY, "valueAfterAddingPremium: val > MAX_QTY");
+
+    Mutated line:
+                 require(val > MAX_QTY, "valueAfterAddingPremium: val > MAX_QTY");
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/Dao/KyberFeeHandler.sol
+    Line nr: 340
+    Result: Error
+    Original line:
+                     if (sanityRateContract.length == 0) {
+
+    Mutated line:
+                     if (sanityRateContract.length != 0) {
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/mock/MockPermissionGroupsNoModifiers.sol
+    Line nr: 9
+    Result: Error
+    Original line:
+             constructor() public PermissionGroupsNoModifiers(msg.sender) {}
+
+    Mutated line:
+             constructor() public  {}
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/Dao/KyberDAO.sol
+    Line nr: 687
+    Result: Error
+    Original line:
+                 if (points > totalPts) {
+
+    Mutated line:
+                 if (points >= totalPts) {
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/mock/GasHelper.sol
+    Line nr: 19
+    Result: Error
+    Original line:
+             uint256 constant MIN_ACTIVATE_PRICE = 8 * 1000 * 1000 * 1000; // 8 gwei
+
+    Mutated line:
+             uint256 constant MIN_ACTIVATE_PRICE = 8 * 1000 * 1000 / 1000; // 8 gwei
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/bridges/bancor/KyberBancorReserve.sol
+    Line nr: 89
+    Result: Error
+    Original line:
+                 require(msg.sender == kyberNetwork, "trade: sender is not network");
+
+    Mutated line:
+                 require(msg.sender != kyberNetwork, "trade: sender is not network");
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/bridges/eth2dai/mock/MockOtcOrderbook.sol
+    Line nr: 77
+    Result: Error
+    Original line:
+                 for(uint i = 0; i < buyOffers.length; i++) {
+
+    Mutated line:
+                 for(uint i = 0; i >= buyOffers.length; i++) {
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/Dao/KyberDAO.sol
+    Line nr: 805
+    Result: Error
+    Original line:
+                 require(tInPrecision <= POWER_128, "validateParams: t is high");
+
+    Mutated line:
+                 require(tInPrecision < POWER_128, "validateParams: t is high");
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/mock/TokenNoDecimal.sol
+    Line nr: 44
+    Result: Error
+    Original line:
+                 return a >= b ? a : b;
+
+    Mutated line:
+                 return a < b ? a : b;
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/KyberHintHandler.sol
+    Line nr: 255
+    Result: Error
+    Original line:
+                 if (!(reserveIds.length > 0)) return HintErrors.ReserveIdEmptyError;
+
+    Mutated line:
+                 if (!(reserveIds.length >= 0)) return HintErrors.ReserveIdEmptyError;
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/utils/Utils4.sol
+    Line nr: 98
+    Result: Error
+    Original line:
+                     require((srcDecimals - dstDecimals) <= MAX_DECIMALS, "src - dst > MAX_DECIMALS");
+
+    Mutated line:
+                     require((srcDecimals + dstDecimals) <= MAX_DECIMALS, "src - dst > MAX_DECIMALS");
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/bridges/eth2dai/Eth2DaiReserve.sol
+    Line nr: 828
+    Result: Error
+    Original line:
+                 traverseX = (data / (POW_2_96 * POW_2_32 * POW_2_32)) & (POW_2_32 - 1);
+
+    Mutated line:
+                 traverseX = (data / (POW_2_96 * POW_2_32 * POW_2_32)) & (POW_2_32 + 1);
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/mock/GenerousKyberNetwork2.sol
+    Line nr: 36
+    Result: Error
+    Original line:
+                 require(rateWithNetworkFee >= tData.input.minConversionRate, "rate < min Rate");
+
+    Mutated line:
+                 require(rateWithNetworkFee < tData.input.minConversionRate, "rate < min Rate");
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/mock/GasHelper.sol
+    Line nr: 34
+    Result: Error
+    Original line:
+                 require(msg.sender == kyberNetwork);
+
+    Mutated line:
+                 require(msg.sender != kyberNetwork);
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/mock/Token.sol
+    Line nr: 50
+    Result: Error
+    Original line:
+                 return a >= b ? a : b;
+
+    Mutated line:
+                 return a < b ? a : b;
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/KyberNetwork.sol
+    Line nr: 1213
+    Result: Error
+    Original line:
+                     uint256 destAmountSplit = i == (reservesData.srcAmounts.length - 1)
+
+    Mutated line:
+                     uint256 destAmountSplit = i != (reservesData.srcAmounts.length - 1)
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/utils/Utils4.sol
+    Line nr: 99
+    Result: Error
+    Original line:
+                     return (srcQty * rate) / (PRECISION * (10**(srcDecimals - dstDecimals)));
+
+    Mutated line:
+                     return (srcQty * rate) / (PRECISION / (10**(srcDecimals - dstDecimals)));
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/Dao/KyberDAO.sol
+    Line nr: 298
+    Result: Error
+    Original line:
+                 if (campaignType == CampaignType.NetworkFee) {
+
+    Mutated line:
+                 if (campaignType != CampaignType.NetworkFee) {
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/Dao/KyberFeeHandler.sol
+    Line nr: 358
+    Result: Error
+    Original line:
+                 require(block.number > lastBurnBlock + burnBlockInterval, "wait more blocks to burn");
+
+    Mutated line:
+                 require(block.number <= lastBurnBlock + burnBlockInterval, "wait more blocks to burn");
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/bridges/bancor/mock/MockBancorNetwork.sol
+    Line nr: 113
+    Result: Error
+    Original line:
+                 require(destAmount <= address(this).balance);
+
+    Mutated line:
+                 require(destAmount > address(this).balance);
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/bridges/eth2dai/Eth2DaiReserve.sol
+    Line nr: 114
+    Result: Error
+    Original line:
+                 if (src == ETH_TOKEN_ADDRESS) {
+
+    Mutated line:
+                 if (src != ETH_TOKEN_ADDRESS) {
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/bridges/eth2dai/Eth2DaiReserve.sol
+    Line nr: 798
+    Result: Error
+    Original line:
+                 ethSize = (data / (POW_2_32 * POW_2_32)) & (POW_2_96 * POW_2_96 - 1);
+
+    Mutated line:
+                 ethSize = (data / (POW_2_32 / POW_2_32)) & (POW_2_96 * POW_2_96 - 1);
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/KyberNetwork.sol
+    Line nr: 1130
+    Result: Error
+    Original line:
+                     destAmount += calcDstQty(
+
+    Mutated line:
+                     destAmount -= calcDstQty(
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/bridges/eth2dai/Eth2DaiReserve.sol
+    Line nr: 813
+    Result: Error
+    Original line:
+                 data |= (takeY & (POW_2_32 - 1)) * POW_2_32 * POW_2_32;
+
+    Mutated line:
+                 data |= (takeY | (POW_2_32 - 1)) * POW_2_32 * POW_2_32;
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/Dao/KyberFeeHandler.sol
+    Line nr: 47
+    Result: Error
+    Original line:
+                 require(msg.sender == burnConfigSetter, "only burnConfigSetter");
+
+    Mutated line:
+                 require(msg.sender != burnConfigSetter, "only burnConfigSetter");
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/utils/PermissionGroups2.sol
+    Line nr: 13
+    Result: Error
+    Original line:
+                 require(_admin != address(0), "Admin 0");
+
+    Mutated line:
+                 require(_admin == address(0), "Admin 0");
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/mock/GasHelper.sol
+    Line nr: 21
+    Result: Error
+    Original line:
+             constructor(address _kyberNetwork, address _admin) public WithdrawableNoModifiers(_admin) {
+
+    Mutated line:
+             constructor(address _kyberNetwork, address _admin) public  {
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/bridges/eth2dai/Eth2DaiReserve.sol
+    Line nr: 404
+    Result: Error
+    Original line:
+                 bool useInternalInventory = conversionRate % 2 == 1;
+
+    Mutated line:
+                 bool useInternalInventory = conversionRate % 2 != 1;
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/KyberNetwork.sol
+    Line nr: 1033
+    Result: Error
+    Original line:
+                 require(input.srcAmount <= MAX_QTY, "srcAmt > MAX_QTY");
+
+    Mutated line:
+                 require(input.srcAmount < MAX_QTY, "srcAmt > MAX_QTY");
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/Dao/KyberFeeHandler.sol
+    Line nr: 336
+    Result: Error
+    Original line:
+                 require(_weiToBurn > 0, "_weiToBurn is 0");
+
+    Mutated line:
+                 require(_weiToBurn >= 0, "_weiToBurn is 0");
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/KyberMatchingEngine.sol
+    Line nr: 248
+    Result: Error
+    Original line:
+                 for (uint256 i = 0; i < length; i++) {
+
+    Mutated line:
+                 for (uint256 i = 0; i <= length; i++) {
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/KyberNetwork.sol
+    Line nr: 401
+    Result: Error
+    Original line:
+                     srcAmount: (srcQty == 0) ? 1 : srcQty,
+
+    Mutated line:
+                     srcAmount: (srcQty != 0) ? 1 : srcQty,
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/bridges/eth2dai/Eth2DaiReserve.sol
+    Line nr: 605
+    Result: Error
+    Original line:
+                     } else if (offers[numTakenOffer].payAmount >= remainingSrcAmount) {
+
+    Mutated line:
+                     } else if (offers[numTakenOffer].payAmount < remainingSrcAmount) {
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/Dao/KyberDAO.sol
+    Line nr: 714
+    Result: Error
+    Original line:
+                 if (epoch > 0) {
+
+    Mutated line:
+                 if (epoch >= 0) {
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/mock/TokenNoDecimal.sol
+    Line nr: 21
+    Result: Error
+    Original line:
+                 require(a == 0 || c / a == b, "mul overflow");
+
+    Mutated line:
+                 require(a == 0 || c / a != b, "mul overflow");
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/KyberStorage.sol
+    Line nr: 331
+    Result: Error
+    Original line:
+                 isFeeAccountedFlags = (feeAccountedPerType & (1 << reserveType[reserveId])) > 0;
+
+    Mutated line:
+                 isFeeAccountedFlags = (feeAccountedPerType & (1 << reserveType[reserveId])) <= 0;
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/Dao/KyberDAO.sol
+    Line nr: 716
+    Result: Error
+    Original line:
+                     if (campaignID != 0) {
+
+    Mutated line:
+                     if (campaignID == 0) {
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/bridges/bancor/mock/MockBancorNetwork.sol
+    Line nr: 66
+    Result: Error
+    Original line:
+                         if (destAmount > address(this).balance) {
+
+    Mutated line:
+                         if (destAmount >= address(this).balance) {
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/KyberNetwork.sol
+    Line nr: 748
+    Result: Error
+    Original line:
+                         (bool success, ) = trader.call.value(srcAmount - requiredSrcAmount)("");
+
+    Mutated line:
+                         (bool success, ) = trader.call.value(srcAmount + requiredSrcAmount)("");
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/mock/SimpleKyberProxy.sol
+    Line nr: 115
+    Result: Error
+    Original line:
+                     networkFeeWei = (srcAmount * networkFeeBps) / BPS;
+
+    Mutated line:
+                     networkFeeWei = (srcAmount / networkFeeBps) / BPS;
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/KyberNetwork.sol
+    Line nr: 1122
+    Result: Error
+    Original line:
+                 uint256 destDecimals = (src == ETH_TOKEN_ADDRESS) ? reservesData.decimals : ETH_DECIMALS;
+
+    Mutated line:
+                 uint256 destDecimals = (src != ETH_TOKEN_ADDRESS) ? reservesData.decimals : ETH_DECIMALS;
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/bridges/eth2dai/Eth2DaiReserve.sol
+    Line nr: 177
+    Result: Error
+    Original line:
+                 require(srcToken == ETH_TOKEN_ADDRESS || destToken == ETH_TOKEN_ADDRESS, "trade: srcToken or destToken must be ETH");
+
+    Mutated line:
+                 require(srcToken == ETH_TOKEN_ADDRESS || destToken != ETH_TOKEN_ADDRESS, "trade: srcToken or destToken must be ETH");
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/Dao/KyberDAO.sol
+    Line nr: 404
+    Result: Error
+    Original line:
+                 uint256 totalStake = dAddress == staker ? stake.add(dStake) : dStake;
+
+    Mutated line:
+                 uint256 totalStake = dAddress != staker ? stake.add(dStake) : dStake;
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/bridges/eth2dai/Eth2DaiReserve.sol
+    Line nr: 777
+    Result: Error
+    Original line:
+                 isEnabled = (data / ((POW_2_96 / 2) * POW_2_96 * POW_2_32 * POW_2_32)) % 2 == 0 ? false : true;
+
+    Mutated line:
+                 isEnabled = (data / ((POW_2_96 / 2) * POW_2_96 / POW_2_32 * POW_2_32)) % 2 == 0 ? false : true;
+
+
+Mutation:
+    File: /home/desmond/smart-contracts/contracts/bridges/eth2dai/Eth2DaiReserve.sol
+    Line nr: 798
+    Result: Error
+    Original line:
+                 ethSize = (data / (POW_2_32 * POW_2_32)) & (POW_2_96 * POW_2_96 - 1);
+
+    Mutated line:
+                 ethSize = (data / (POW_2_32 / POW_2_32)) & (POW_2_96 * POW_2_96 - 1);
+
+
