@@ -22,15 +22,9 @@ This specific branch is for mutation testing.
 3. Clone this repo
 4. `npm ci`
 5. `npx truffle compile`
-6. Spawn buidler node in a separate terminal: 
-    ```
-    npx buidler node
-    ```
-7. Run 
+6. Do either `npx buidler node` or `ganache-cli -l 9000000 -e 1000000000000000` in 1 terminal
+7. (Optional) In another terminal, run `npx truffle test` to verify that all tests pass with either ganache-cli or buidlerevm
+8. In another terminal, run 
     ```
     vertigo run --network mutNet1 --exclude ./contracts/Dao --exclude ./contracts/mock --exclude ./contracts/utils/zeppelin --exclude ./contracts/wrappers --exclude ./contracts/Migrations.sol --output mutOutput.txt
     ```
-
-## Notes
-- Later versions of Truffle (>= 4.1.15) break the `beforeAll` hook. That's why specific truffle version must be used.
-- ~~If any port number needs to be changed, edit the port number in `truffle-config.js` as well.~~
