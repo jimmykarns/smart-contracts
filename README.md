@@ -1,5 +1,5 @@
 ## Introduction
-This specific branch is for mutation testing.
+This specific branch is for mutation testing of the Katalyst contracts.
 
 ## Setup Requirements (AWS instructions)
 - Python 3.7
