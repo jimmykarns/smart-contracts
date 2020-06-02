@@ -1,47 +1,39 @@
-pragma solidity 0.5.11;
+pragma solidity 0.6.6;
 
-import "../KyberNetwork.sol";
+import "./MaliciousKyberNetwork.sol";
 
 
 /*
  * @title Kyber Network main contract, takes some fee and reports actual dest amount minus Fees.
  */
-contract MaliciousKyberNetwork2 is KyberNetwork {
-    uint256 public myFeeWei = 10;
-
+contract MaliciousKyberNetwork2 is MaliciousKyberNetwork {
+    
     constructor(address _admin, IKyberStorage _kyberStorage)
         public
-        KyberNetwork(_admin, _kyberStorage)
-    {}
-
-    function setMyFeeWei(uint256 fee) public {
-        myFeeWei = fee;
+        MaliciousKyberNetwork(_admin, _kyberStorage)
+    {
+        myFeeWei = 10;
     }
 
-    /// @notice use token address ETH_TOKEN_ADDRESS for ether
-    /// @dev do one trade with a reserve
-    /// @param src Src token
-    /// @param amount amount of src tokens
-    /// @param dest   Destination token
-    /// @param destAddress Address to send tokens to
-    /// @return true if trade is successful
     function doReserveTrades(
         IERC20 src,
         uint256 amount,
         IERC20 dest,
         address payable destAddress,
-        TradeData memory tData,
-        uint256 expectedDestAmount
-    ) internal returns (bool) {
+        ReservesData memory reservesData,
+        uint256 expectedDestAmount,
+        uint256 srcDecimals,
+        uint256 destDecimals
+    ) internal override {
         if (src == dest) {
             //E2E, need not do anything except for T2E, transfer ETH to destAddress
             if (destAddress != (address(this))) destAddress.transfer(amount - myFeeWei);
-            return true;
+            return;
         }
 
-        ReservesData memory reservesData = src == ETH_TOKEN_ADDRESS
-            ? tData.ethToToken
-            : tData.tokenToEth;
+        srcDecimals;
+        destDecimals;
+
         uint256 callValue;
         uint256 srcAmountSoFar;
 
@@ -54,7 +46,7 @@ contract MaliciousKyberNetwork2 is KyberNetwork {
 
             // reserve sends tokens/eth to network. network sends it to destination
             require(
-                reservesData.addresses[i].trade.value(callValue)(
+                reservesData.addresses[i].trade{value: callValue}(
                     src,
                     splitAmount,
                     dest,
@@ -69,6 +61,6 @@ contract MaliciousKyberNetwork2 is KyberNetwork {
             dest.safeTransfer(destAddress, (expectedDestAmount - myFeeWei));
         }
 
-        return true;
+        return;
     }
 }

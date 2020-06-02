@@ -1,4 +1,4 @@
-pragma solidity 0.5.11;
+pragma solidity 0.6.6;
 
 import "../IERC20.sol";
 import "../IGasHelper.sol";
@@ -18,7 +18,7 @@ contract MockGasHelper is IGasHelper {
         uint256 tradeWei,
         bytes32[] calldata t2eReserveIds,
         bytes32[] calldata e2tReserveIds
-    ) external {
+    ) external override {
         require(platformWallet == _platformWallet);
         src;
         dest;

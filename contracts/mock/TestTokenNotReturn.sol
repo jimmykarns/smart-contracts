@@ -1,4 +1,4 @@
-pragma solidity 0.5.11;
+pragma solidity 0.6.6;
 
 
 /* all this file is based on code from open zepplin
@@ -64,14 +64,14 @@ library SafeMath {
  * Simpler version of ERC20 interface
  * see https://github.com/ethereum/EIPs/issues/20
  */
-contract ERC20Basic {
+abstract contract ERC20Basic {
     uint256 public totalSupply;
 
     event Transfer(address indexed from, address indexed to, uint256 value);
 
-    function transfer(address to, uint256 value) public;
+    function transfer(address to, uint256 value) public virtual;
 
-    function balanceOf(address who) public view returns (uint256);
+    function balanceOf(address who) public view virtual returns (uint256);
 }
 
 
@@ -81,18 +81,18 @@ contract ERC20Basic {
  * ERC20 interface
  * see https://github.com/ethereum/EIPs/issues/20
  */
-contract ERC20 is ERC20Basic {
+abstract contract ERC20 is ERC20Basic {
     event Approval(address indexed owner, address indexed spender, uint256 value);
 
     function transferFrom(
         address from,
         address to,
         uint256 value
-    ) public;
+    ) public virtual;
 
-    function approve(address spender, uint256 value) public;
+    function approve(address spender, uint256 value) public virtual;
 
-    function allowance(address owner, address spender) public view returns (uint256);
+    function allowance(address owner, address spender) public view virtual returns (uint256);
 }
 
 
@@ -117,13 +117,13 @@ contract BasicToken is ERC20Basic {
         _;
     }
 
-    function transfer(address _to, uint256 _value) public onlyPayloadSize(2 * 32) {
+    function transfer(address _to, uint256 _value) public override onlyPayloadSize(2 * 32) {
         balances[msg.sender] = balances[msg.sender].sub(_value);
         balances[_to] = balances[_to].add(_value);
         emit Transfer(msg.sender, _to, _value);
     }
 
-    function balanceOf(address _owner) public view returns (uint256 balance) {
+    function balanceOf(address _owner) public view override returns (uint256 balance) {
         return balances[_owner];
     }
 }
@@ -145,7 +145,7 @@ contract StandardToken is BasicToken, ERC20 {
         address _from,
         address _to,
         uint256 _value
-    ) public {
+    ) public override {
         uint256 _allowance = allowed[_from][msg.sender];
 
         // Check is not needed because sub(_allowance, _value) will already revert if this condition is not met
@@ -157,12 +157,12 @@ contract StandardToken is BasicToken, ERC20 {
         emit Transfer(_from, _to, _value);
     }
 
-    function approve(address _spender, uint256 _value) public {
+    function approve(address _spender, uint256 _value) public override {
         allowed[msg.sender][_spender] = _value;
         emit Approval(msg.sender, _spender, _value);
     }
 
-    function allowance(address _owner, address _spender) public view returns (uint256 remaining) {
+    function allowance(address _owner, address _spender) public view override returns (uint256 remaining) {
         return allowed[_owner][_spender];
     }
 }
@@ -201,7 +201,7 @@ contract TestTokenNotReturn is StandardToken {
         balances[msg.sender] = balances[msg.sender].sub(_value);
         totalSupply = totalSupply.sub(_value);
         emit Burn(msg.sender, _value);
-        emit Transfer(msg.sender, address(0x0), _value);
+        emit Transfer(msg.sender, address(0), _value);
     }
 
     // save some gas by making only one contract call

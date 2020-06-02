@@ -1,10 +1,12 @@
-pragma solidity 0.5.11;
+pragma solidity 0.6.6;
+
+import "./IEpochUtils.sol";
 
 
-interface IKyberStaking {
+interface IKyberStaking is IEpochUtils {
     event Delegated(
         address indexed staker,
-        address indexed delegatedAddress,
+        address indexed representative,
         uint256 indexed epoch,
         bool isDelegated
     );
@@ -14,9 +16,9 @@ interface IKyberStaking {
     function initAndReturnStakerDataForCurrentEpoch(address staker)
         external
         returns (
-            uint256 _stake,
-            uint256 _delegatedStake,
-            address _delegatedAddress
+            uint256 stake,
+            uint256 delegatedStake,
+            address representative
         );
 
     function deposit(uint256 amount) external;
@@ -25,16 +27,18 @@ interface IKyberStaking {
 
     function withdraw(uint256 amount) external;
 
-    function getStakerDataForPastEpoch(address staker, uint256 epoch)
+    /**
+     * @notice return raw data of a staker for an epoch
+     *         WARN: should be used only for initialized data
+     *          if data has not been initialized, it will return all 0
+     *          pool master shouldn't use this function to compute/distribute rewards of pool members
+     */
+    function getStakerRawData(address staker, uint256 epoch)
         external
         view
         returns (
-            uint256 _stake,
-            uint256 _delegatedStake,
-            address _delegatedAddress
+            uint256 stake,
+            uint256 delegatedStake,
+            address representative
         );
-
-    function epochPeriodInSeconds() external view returns (uint256);
-
-    function firstEpochStartTimestamp() external view returns (uint256);
 }

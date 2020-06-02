@@ -1,4 +1,4 @@
-pragma solidity 0.5.11;
+pragma solidity 0.6.6;
 
 import "../KyberNetwork.sol";
 
@@ -14,31 +14,27 @@ contract GenerousKyberNetwork is KyberNetwork {
         KyberNetwork(_admin, _kyberStorage)
     {}
 
-    /* solhint-enable function-max-lines */
-    function removeKyberProxy(address networkProxy) external {
+    function removeKyberProxy(address networkProxy) external override {
         // reduce extra gas cost of deploying this contract
         networkProxy;
     }
 
-    /* solhint-disable function-max-lines */
-    /// @notice use token address ETH_TOKEN_ADDRESS for ether
-    /// @dev trade api for kyber network.
-    /// @param tData.input structure of trade inputs
     function trade(TradeData memory tData, bytes memory hint)
         internal
+        override
         nonReentrant
         returns (uint256 destAmount)
     {
         tData.networkFeeBps = getAndUpdateNetworkFee();
 
         // destAmount = printGas("start_tr", 0, Module.NETWORK);
-        require(verifyTradeInputValid(tData.input, tData.networkFeeBps), "invalid");
+        validateTradeInput(tData.input);
 
         // amounts excluding fees
         uint256 rateWithNetworkFee;
         (destAmount, rateWithNetworkFee) = calcRatesAndAmounts(tData, hint);
 
-        require(rateWithNetworkFee > 0, "0 rate");
+        require(rateWithNetworkFee > 0, "trade invalid, if hint involved, try parseHint API");
         require(rateWithNetworkFee < MAX_RATE, "rate > MAX_RATE");
         require(rateWithNetworkFee >= tData.input.minConversionRate, "rate < minConvRate");
 
@@ -59,14 +55,11 @@ contract GenerousKyberNetwork is KyberNetwork {
             // notice tData passed by reference. and updated
             destAmount = tData.input.maxDestAmount;
             actualSrcAmount = calcTradeSrcAmountFromDest(tData);
-
-            require(
-                handleChange(
-                    tData.input.src,
-                    tData.input.srcAmount,
-                    actualSrcAmount,
-                    tData.input.trader
-                )
+            handleChange(
+                tData.input.src,
+                tData.input.srcAmount,
+                actualSrcAmount,
+                tData.input.trader
             );
         } else {
             actualSrcAmount = tData.input.srcAmount;
@@ -89,43 +82,40 @@ contract GenerousKyberNetwork is KyberNetwork {
             return destAmount;
         }
 
-        require(
-            doReserveTrades( //src to ETH
-                tData.input.src,
-                actualSrcAmount,
-                ETH_TOKEN_ADDRESS,
-                address(this),
-                tData,
-                tData.tradeWei
-            )
+        doReserveTrades( //src to ETH
+            tData.input.src,
+            ETH_TOKEN_ADDRESS,
+            address(this),
+            tData.tokenToEth,
+            tData.tradeWei,
+            tData.tokenToEth.decimals,
+            ETH_DECIMALS
         ); //tData.tradeWei (expectedDestAmount) not used if destAddress == address(this)
 
-        require(
-            doReserveTrades( //Eth to dest
-                ETH_TOKEN_ADDRESS,
-                tData.tradeWei - tData.networkFeeWei - tData.platformFeeWei,
-                tData.input.dest,
-                tData.input.destAddress,
-                tData,
-                destAmount
-            )
+        doReserveTrades( //Eth to dest
+            ETH_TOKEN_ADDRESS,
+            tData.input.dest,
+            tData.input.destAddress,
+            tData.ethToToken,
+            destAmount,
+            ETH_DECIMALS,
+            tData.ethToToken.decimals
         );
 
-        require(handleFees(tData));
+        handleFees(tData);
 
         emit KyberTrade({
-            trader: tData.input.trader,
             src: tData.input.src,
             dest: tData.input.dest,
-            srcAmount: actualSrcAmount,
-            destAmount: destAmount,
-            destAddress: tData.input.destAddress,
             ethWeiValue: tData.tradeWei,
             networkFeeWei: tData.networkFeeWei,
             customPlatformFeeWei: tData.platformFeeWei,
             t2eIds: tData.tokenToEth.ids,
             e2tIds: tData.ethToToken.ids,
-            hint: hint
+            t2eSrcAmounts: tData.tokenToEth.srcAmounts,
+            e2tSrcAmounts: tData.ethToToken.srcAmounts,
+            t2eRates: tData.tokenToEth.rates,
+            e2tRates: tData.ethToToken.rates
         });
 
         return (destAmount);

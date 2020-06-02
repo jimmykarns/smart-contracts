@@ -1,4 +1,4 @@
-pragma solidity 0.5.11;
+pragma solidity 0.6.6;
 
 import "../IGasHelper.sol";
 import "../utils/WithdrawableNoModifiers.sol";
@@ -31,7 +31,7 @@ contract GasHelper is IGasHelper, WithdrawableNoModifiers {
         uint256 tradeWei,
         bytes32[] calldata t2eReserveIds,
         bytes32[] calldata e2tReserveIds
-    ) external {
+    ) external override {
         require(msg.sender == kyberNetwork);
         if (tx.gasprice <= MIN_ACTIVATE_PRICE) return;
 

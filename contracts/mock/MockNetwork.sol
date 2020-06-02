@@ -1,4 +1,4 @@
-pragma solidity 0.5.11;
+pragma solidity 0.6.6;
 
 import "../KyberNetwork.sol";
 
@@ -12,18 +12,18 @@ contract MockNetwork is KyberNetwork {
 
     // allow set zero contract
     function setContracts(
-        IKyberFeeHandler _feeHandler,
-        IKyberMatchingEngine _matchingEngine,
+        IKyberFeeHandler _kyberFeeHandler,
+        IKyberMatchingEngine _kyberMatchingEngine,
         IGasHelper _gasHelper
-    ) external {
-        if (feeHandler != _feeHandler) {
-            feeHandler = _feeHandler;
-            emit FeeHandlerUpdated(_feeHandler);
+    ) external override {
+        if (kyberFeeHandler != _kyberFeeHandler) {
+            kyberFeeHandler = _kyberFeeHandler;
+            emit KyberFeeHandlerUpdated(_kyberFeeHandler);
         }
 
-        if (matchingEngine != _matchingEngine) {
-            matchingEngine = _matchingEngine;
-            emit MatchingEngineUpdated(_matchingEngine);
+        if (kyberMatchingEngine != _kyberMatchingEngine) {
+            kyberMatchingEngine = _kyberMatchingEngine;
+            emit KyberMatchingEngineUpdated(_kyberMatchingEngine);
         }
 
         if ((_gasHelper != IGasHelper(0)) && (_gasHelper != gasHelper)) {
@@ -37,7 +37,7 @@ contract MockNetwork is KyberNetwork {
         uint256 srcAmount,
         uint256 requiredSrcAmount,
         address payable trader
-    ) public returns (bool) {
+    ) public {
         return handleChange(src, srcAmount, requiredSrcAmount, trader);
     }
 
@@ -60,18 +60,20 @@ contract MockNetwork is KyberNetwork {
     //over ride some functions to reduce contract size.
     function doReserveTrades(
         IERC20 src,
-        uint256 amount,
         IERC20 dest,
         address payable destAddress,
-        TradeData memory tradeData,
-        uint256 expectedDestAmount
-    ) internal returns (bool) {
+        ReservesData memory reservesData,
+        uint256 expectedDestAmount,
+        uint256 srcDecimals,
+        uint256 destDecimals
+    ) internal override {
         src;
-        amount;
         dest;
         destAddress;
-        tradeData;
+        reservesData;
         expectedDestAmount;
+        srcDecimals;
+        destDecimals;
 
         revert("must use real network");
         // return true;

@@ -1,4 +1,4 @@
-pragma solidity 0.5.11;
+pragma solidity 0.6.6;
 
 import "../KyberNetwork.sol";
 
@@ -15,6 +15,7 @@ contract KyberNetworkNoMaxDest is KyberNetwork {
     function calcTradeSrcAmountFromDest(TradeData memory tData)
         internal
         pure
+        override
         returns (uint256 actualSrcAmount)
     {
         actualSrcAmount = tData.input.srcAmount;

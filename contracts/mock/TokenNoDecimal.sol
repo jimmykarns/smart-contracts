@@ -1,4 +1,4 @@
-pragma solidity 0.5.11;
+pragma solidity 0.6.6;
 
 
 /* all this file is based on code from open zepplin
@@ -66,10 +66,10 @@ library SafeMath {
  * Simpler version of ERC20 interface
  * see https://github.com/ethereum/EIPs/issues/20
  */
-contract ERC20Basic {
+abstract contract ERC20Basic {
     uint public totalSupply;
-    function balanceOf(address who) external view returns (uint);
-    function transfer(address to, uint value) external returns (bool);
+    function balanceOf(address who) external view virtual returns (uint);
+    function transfer(address to, uint value) external virtual returns (bool);
     event Transfer(address indexed from, address indexed to, uint value);
 }
 
@@ -79,10 +79,10 @@ contract ERC20Basic {
  * ERC20 interface
  * see https://github.com/ethereum/EIPs/issues/20
  */
-contract ERC20 is ERC20Basic {
-    function allowance(address owner, address spender) external view returns (uint);
-    function transferFrom(address from, address to, uint value) external returns (bool);
-    function approve(address spender, uint value) external returns (bool);
+abstract contract ERC20 is ERC20Basic {
+    function allowance(address owner, address spender) external view virtual returns (uint);
+    function transferFrom(address from, address to, uint value) external virtual returns (bool);
+    function approve(address spender, uint value) external virtual returns (bool);
     event Approval(address indexed owner, address indexed spender, uint value);
 }
 
@@ -107,14 +107,14 @@ contract BasicToken is ERC20Basic {
         _;
     }
 
-    function transfer(address _to, uint _value)  public onlyPayloadSize(2 * 32) returns (bool) {
+    function transfer(address _to, uint _value) public onlyPayloadSize(2 * 32) override returns (bool) {
         balances[msg.sender] = balances[msg.sender].sub(_value);
         balances[_to] = balances[_to].add(_value);
         emit Transfer(msg.sender, _to, _value);
         return true;
     }
 
-    function balanceOf(address _owner) public view returns (uint balance) {
+    function balanceOf(address _owner) public view override returns (uint balance) {
         return balances[_owner];
     }
 }
@@ -133,7 +133,7 @@ contract StandardToken is BasicToken, ERC20 {
 
     mapping (address => mapping (address => uint)) allowed;
 
-    function transferFrom(address _from, address _to, uint _value) public returns (bool) {
+    function transferFrom(address _from, address _to, uint _value) public override returns (bool) {
 
         uint256 _allowance = allowed[_from][msg.sender];
 
@@ -147,13 +147,13 @@ contract StandardToken is BasicToken, ERC20 {
         return true;
     }
 
-    function approve(address _spender, uint _value) public returns (bool) {
+    function approve(address _spender, uint _value) public override returns (bool) {
         allowed[msg.sender][_spender] = _value;
         emit Approval(msg.sender, _spender, _value);
         return true;
     }
 
-    function allowance(address _owner, address _spender) public view returns (uint remaining) {
+    function allowance(address _owner, address _spender) public view override returns (uint remaining) {
         return allowed[_owner][_spender];
     }
 }

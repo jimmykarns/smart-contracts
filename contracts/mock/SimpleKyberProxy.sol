@@ -1,39 +1,56 @@
-pragma solidity 0.5.11;
+pragma solidity 0.6.6;
 
-import "../utils/Utils4.sol";
+import "../utils/Utils5.sol";
 import "../utils/zeppelin/SafeERC20.sol";
 import "../IKyberNetworkProxy.sol";
 
 
-contract SimpleKyberProxy is IKyberNetworkProxy, Utils4 {
+contract SimpleKyberProxy is IKyberNetworkProxy, Utils5 {
     using SafeERC20 for IERC20;
 
     mapping(bytes32 => uint256) public pairRate; //rate in precision units. i.e. if rate is 10**18 its same as 1:1
 
     uint256 networkFeeBps = 25;
 
-    function() external payable {}
+    receive() external payable {}
+
+    function swapEtherToToken(IERC20 token, uint256 minConversionRate)
+        external
+        payable
+        returns (uint256)
+    {
+        return
+            trade(
+                ETH_TOKEN_ADDRESS,
+                msg.value,
+                token,
+                msg.sender,
+                MAX_QTY,
+                minConversionRate,
+                address(0)
+            );
+    }
 
     function tradeWithHint(
         ERC20 src,
         uint256 srcAmount,
         ERC20 dest,
-        address destAddress,
+        address payable destAddress,
         uint256 maxDestAmount,
         uint256 minConversionRate,
-        address walletId,
+        address payable walletId,
         bytes calldata hint
-    ) external payable returns (uint256) {
+    ) external payable override returns (uint256) {
         hint;
         return
             trade(
                 src,
                 srcAmount,
                 dest,
-                address(uint160(address(destAddress))),
+                destAddress,
                 maxDestAmount,
                 minConversionRate,
-                address(uint160(address(walletId)))
+                walletId
             );
     }
 
@@ -44,23 +61,12 @@ contract SimpleKyberProxy is IKyberNetworkProxy, Utils4 {
         uint256 srcQty,
         uint256 platformFeeBps,
         bytes calldata hint
-    ) external view returns (uint256 expectedRate) {
+    ) external view override returns (uint256 expectedRate) {
         srcQty;
         platformFeeBps;
         hint;
         expectedRate = pairRate[keccak256(abi.encodePacked(src, dest))];
         expectedRate = (expectedRate * (BPS - platformFeeBps)) / BPS;
-    }
-
-    function getPriceDataNoFees(
-        IERC20 src,
-        IERC20 dest,
-        uint256 srcQty,
-        bytes calldata hint
-    ) external view returns (uint256 rateNoFee) {
-        srcQty;
-        hint;
-        rateNoFee = pairRate[keccak256(abi.encodePacked(src, dest))];
     }
 
     function setPairRate(
@@ -82,7 +88,7 @@ contract SimpleKyberProxy is IKyberNetworkProxy, Utils4 {
         uint256 maxDestAmount,
         uint256 minConversionRate,
         address payable platformWallet
-    ) public payable returns (uint256) {
+    ) public payable override returns (uint256) {
         return
             tradeWithHintAndFee(
                 src,
@@ -107,7 +113,7 @@ contract SimpleKyberProxy is IKyberNetworkProxy, Utils4 {
         address payable platformWallet,
         uint256 platformFeeBps,
         bytes memory hint
-    ) public payable returns (uint256 destAmount) {
+    ) public payable override returns (uint256 destAmount) {
         uint256 networkFeeWei;
         uint256 platformFeeWei;
 
@@ -148,7 +154,7 @@ contract SimpleKyberProxy is IKyberNetworkProxy, Utils4 {
         ERC20 src,
         ERC20 dest,
         uint256 srcQty
-    ) public view returns (uint256 expectedRate, uint256 worstRate) {
+    ) public view override returns (uint256 expectedRate, uint256 worstRate) {
         srcQty;
         expectedRate = pairRate[keccak256(abi.encodePacked(src, dest))];
         worstRate = (expectedRate * 97) / 100;

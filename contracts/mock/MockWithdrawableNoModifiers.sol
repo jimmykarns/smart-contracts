@@ -1,4 +1,4 @@
-pragma solidity 0.5.11;
+pragma solidity 0.6.6;
 
 import "../utils/WithdrawableNoModifiers.sol";
 
@@ -6,5 +6,5 @@ import "../utils/WithdrawableNoModifiers.sol";
 contract MockWithdrawableNoModifiers is WithdrawableNoModifiers {
     constructor() public WithdrawableNoModifiers(msg.sender) {}
 
-    function() external payable {}
+    receive() external payable {}
 }

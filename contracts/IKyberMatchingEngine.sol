@@ -1,4 +1,4 @@
-pragma solidity 0.5.11;
+pragma solidity 0.6.6;
 
 import "./IKyberReserve.sol";
 import "./IKyberNetwork.sol";
@@ -8,9 +8,9 @@ import "./IKyberStorage.sol";
 interface IKyberMatchingEngine {
     enum ProcessWithRate {NotRequired, Required}
 
-    function setNegligbleRateDiffBps(uint256 _negligibleRateDiffBps) external returns (bool);
+    function setNegligibleRateDiffBps(uint256 _negligibleRateDiffBps) external;
 
-    function setKyberStorage(IKyberStorage _kyberStorage) external returns (bool);
+    function setKyberStorage(IKyberStorage _kyberStorage) external;
 
     function getNegligibleRateDiffBps() external view returns (uint256);
 

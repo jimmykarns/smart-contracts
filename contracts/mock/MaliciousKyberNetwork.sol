@@ -1,10 +1,10 @@
-pragma solidity 0.5.11;
+pragma solidity 0.6.6;
 
 import "../KyberNetwork.sol";
 
 
 /*
- * @title Kyber Network main contract, takes some fee and reports actual dest amount minus Fees.
+ * @title Malicious Kyber Network, takes (steals) some extra fees and reports actual dest amount minus Fees.
  */
 contract MaliciousKyberNetwork is KyberNetwork {
     uint256 public myFeeWei = 10;
@@ -18,26 +18,21 @@ contract MaliciousKyberNetwork is KyberNetwork {
         myFeeWei = fee;
     }
 
-    /* solhint-disable function-max-lines */
-    //  Most of the lines here are functions calls spread over multiple lines.
-    //  We find this function readable enough
-    /// @notice use token address ETH_TOKEN_ADDRESS for ether
-    /// @dev trade api for kyber network.
-    /// @param tData.input structure of trade inputs
     function trade(TradeData memory tData, bytes memory hint)
         internal
+        override
         nonReentrant
         returns (uint256 destAmount)
     {
         tData.networkFeeBps = getAndUpdateNetworkFee();
 
-        require(verifyTradeInputValid(tData.input, tData.networkFeeBps), "invalid");
+        validateTradeInput(tData.input);
 
         // amounts excluding fees
         uint256 rateWithNetworkFee;
         (destAmount, rateWithNetworkFee) = calcRatesAndAmounts(tData, hint);
 
-        require(rateWithNetworkFee > 0, "0 rate");
+        require(rateWithNetworkFee > 0, "trade invalid, if hint involved, try parseHint API");
         require(rateWithNetworkFee < MAX_RATE, "rate > MAX_RATE");
         require(rateWithNetworkFee >= tData.input.minConversionRate, "rate < minConvRate");
 
@@ -59,83 +54,73 @@ contract MaliciousKyberNetwork is KyberNetwork {
             destAmount = tData.input.maxDestAmount;
             actualSrcAmount = calcTradeSrcAmountFromDest(tData);
 
-            require(
-                handleChange(
-                    tData.input.src,
-                    tData.input.srcAmount,
-                    actualSrcAmount,
-                    tData.input.trader
-                )
+            handleChange(
+                tData.input.src,
+                tData.input.srcAmount,
+                actualSrcAmount,
+                tData.input.trader
             );
         } else {
             actualSrcAmount = tData.input.srcAmount;
         }
 
-        require(
-            doReserveTrades( //src to ETH
-                tData.input.src,
-                actualSrcAmount,
-                ETH_TOKEN_ADDRESS,
-                address(this),
-                tData,
-                tData.tradeWei
-            )
+        doReserveTrades( //src to ETH
+            tData.input.src,
+            actualSrcAmount,
+            ETH_TOKEN_ADDRESS,
+            address(this),
+            tData.tokenToEth,
+            tData.tradeWei,
+            tData.tokenToEth.decimals,
+            ETH_DECIMALS
         ); //tData.tradeWei (expectedDestAmount) not used if destAddress == address(this)
 
-        require(
-            doReserveTrades( //Eth to dest
-                ETH_TOKEN_ADDRESS,
-                tData.tradeWei - tData.networkFeeWei - tData.platformFeeWei,
-                tData.input.dest,
-                tData.input.destAddress,
-                tData,
-                destAmount
-            )
+        doReserveTrades( //Eth to dest
+            ETH_TOKEN_ADDRESS,
+            tData.tradeWei - tData.networkFeeWei - tData.platformFeeWei,
+            tData.input.dest,
+            tData.input.destAddress,
+            tData.ethToToken,
+            destAmount,
+            ETH_DECIMALS,
+            tData.ethToToken.decimals
         );
-        require(handleFees(tData));
+        handleFees(tData);
         emit KyberTrade({
-            trader: tData.input.trader,
             src: tData.input.src,
             dest: tData.input.dest,
-            srcAmount: actualSrcAmount,
-            destAmount: destAmount,
-            destAddress: tData.input.destAddress,
             ethWeiValue: tData.tradeWei,
             networkFeeWei: tData.networkFeeWei,
             customPlatformFeeWei: tData.platformFeeWei,
             t2eIds: tData.tokenToEth.ids,
             e2tIds: tData.ethToToken.ids,
-            hint: hint
+            t2eSrcAmounts: tData.tokenToEth.srcAmounts,
+            e2tSrcAmounts: tData.ethToToken.srcAmounts,
+            t2eRates: tData.tokenToEth.rates,
+            e2tRates: tData.ethToToken.rates
         });
         return (destAmount - myFeeWei);
     }
 
-    /* solhint-enable function-max-lines */
-
-    /// @notice use token address ETH_TOKEN_ADDRESS for ether
-    /// @dev do one trade with a reserve
-    /// @param src Src token
-    /// @param amount amount of src tokens
-    /// @param dest   Destination token
-    /// @param destAddress Address to send tokens to
-    /// @return true if trade is successful
     function doReserveTrades(
         IERC20 src,
         uint256 amount,
         IERC20 dest,
         address payable destAddress,
-        TradeData memory tData,
-        uint256 expectedDestAmount
-    ) internal returns (bool) {
+        ReservesData memory reservesData,
+        uint256 expectedDestAmount,
+        uint256 srcDecimals,
+        uint256 destDecimals
+    ) internal virtual {
         if (src == dest) {
             //E2E, need not do anything except for T2E, transfer ETH to destAddress
             if (destAddress != (address(this))) destAddress.transfer(amount - myFeeWei);
-            return true;
+            return;
         }
 
-        ReservesData memory reservesData = src == ETH_TOKEN_ADDRESS
-            ? tData.ethToToken
-            : tData.tokenToEth;
+        srcDecimals;
+        destDecimals;
+
         uint256 callValue;
         uint256 srcAmountSoFar;
 
@@ -148,7 +133,7 @@ contract MaliciousKyberNetwork is KyberNetwork {
 
             // reserve sends tokens/eth to network. network sends it to destination
             require(
-                reservesData.addresses[i].trade.value(callValue)(
+                reservesData.addresses[i].trade{value: callValue}(
                     src,
                     splitAmount,
                     dest,
@@ -162,7 +147,5 @@ contract MaliciousKyberNetwork is KyberNetwork {
         if (destAddress != address(this)) {
             dest.safeTransfer(destAddress, (expectedDestAmount - myFeeWei));
         }
-
-        return true;
     }
 }

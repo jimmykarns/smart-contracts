@@ -193,6 +193,42 @@ function assertApproximate(val1, val2, errorStr) {
     }
 }
 
+module.exports.assertEqualArray = assertEqualArray;
+function assertEqualArray(arr1, arr2, errorStr) {
+  assert(arr1.equals(arr2), errorStr);
+};
+
+// Warn if overriding existing method
+if(Array.prototype.equals)
+    console.warn("Overriding existing Array.prototype.equals. Possible causes: New API defines the method, there's a framework conflict or you've got double inclusions in your code.");
+
+// attach the .equals method to Array's prototype to call it on any array
+Array.prototype.equals = function (array) {
+    // if the other array is a falsy value, return
+    if (!array)
+        return false;
+
+    // compare lengths - can save a lot of time 
+    if (this.length != array.length)
+        return false;
+
+    for (var i = 0, l=this.length; i < l; i++) {
+        // Check if we have nested arrays
+        if (this[i] instanceof Array && array[i] instanceof Array) {
+            // recurse into the nested arrays
+            if (!this[i].equals(array[i]))
+                return false;       
+        }           
+        else if (this[i] != array[i]) { 
+            // Warning - two different object instances will never be equal: {x:20} != {x:20}
+            return false;   
+        }           
+    }       
+    return true;
+}
+// Hide method from for-in loops
+Object.defineProperty(Array.prototype, "equals", {enumerable: false});
+
 module.exports.assertApproximate = assertApproximate;
 
 module.exports.assertGreater = function(val1, val2, errorStr) {
@@ -389,4 +425,56 @@ module.exports.mineNewBlockAfter = async function(duration) {
       },
     );
   });
+}
+
+module.exports.buildHint = function(tradeType) {
+  if (tradeType == 'SPLIT') {
+      return (tradeType, reserveIds, splits) => {
+          let sortedReserveIds = [];
+          let sortedSplits = [];
+      
+          reserveIds.map(function (v, i) {
+              return {
+                  id: v,
+                  split: splits[i],
+              };
+          }).sort(function (a, b) {
+              return ((a.id < b.id) ? -1 : ((a.id === b.id) ? 0 : 1));
+          }).forEach(function (v, i) {
+              sortedReserveIds[i] = v.id;
+              if (v.split) sortedSplits[i] = v.split.toString();
+          });
+      
+          return web3.eth.abi.encodeParameters(
+              ['uint8', 'bytes32[]', 'uint[]'],
+              [tradeType, sortedReserveIds, sortedSplits],
+          );
+      }
+  } else {
+      return (tradeType, reserveIds, splits) => {
+          return web3.eth.abi.encodeParameters(
+              ['uint8', 'bytes32[]', 'uint[]'],
+              [tradeType, reserveIds, splits],
+          );
+      }
+  }
+}
+
+module.exports.buildHintT2T = function(
+  t2eType,
+  t2eOpcode,
+  t2eReserveIds,
+  t2eSplits,
+  e2tType,
+  e2tOpcode,
+  e2tReserveIds,
+  e2tSplits
+) {
+  const t2eHint = this.buildHint(t2eType)(t2eOpcode, t2eReserveIds, t2eSplits);
+  const e2tHint = this.buildHint(e2tType)(e2tOpcode, e2tReserveIds, e2tSplits);
+
+  return web3.eth.abi.encodeParameters(
+      ['bytes', 'bytes'],
+      [t2eHint, e2tHint],
+  );
 }

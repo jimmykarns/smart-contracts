@@ -1,4 +1,4 @@
-pragma solidity 0.5.11;
+pragma solidity 0.6.6;
 
 import "../IKyberNetworkProxy.sol";
 
@@ -36,7 +36,7 @@ contract MockTrader {
         );
 
         return
-            kyberNetworkProxy.tradeWithHintAndFee.value(msg.value)(
+            kyberNetworkProxy.tradeWithHintAndFee{value: msg.value}(
                 src,
                 srcAmount,
                 dest,

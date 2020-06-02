@@ -1,4 +1,4 @@
-pragma solidity 0.5.11;
+pragma solidity 0.6.6;
 
 
 interface IERC20 {
@@ -18,13 +18,13 @@ interface IERC20 {
 
     function balanceOf(address _owner) external view returns (uint256 balance);
 
-    function decimals() external view returns (uint256 digits);
+    function decimals() external view returns (uint8 digits);
 
     function totalSupply() external view returns (uint256 supply);
 }
 
 
 // to support backward compatible contract name -- so function signature remains same
-contract ERC20 is IERC20 {
+abstract contract ERC20 is IERC20 {
 
 }

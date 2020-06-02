@@ -1,4 +1,4 @@
-pragma solidity 0.5.11;
+pragma solidity 0.6.6;
 
 import "../ISanityRate.sol";
 
@@ -10,7 +10,7 @@ contract MockChainLinkSanityRate is ISanityRate {
         latestAnswerValue = _kncEthRate;
     }
 
-    function latestAnswer() external view returns (uint256) {
+    function latestAnswer() external view override returns (uint256) {
         return latestAnswerValue;
     }
 }

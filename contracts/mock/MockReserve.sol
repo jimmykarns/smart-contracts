@@ -1,17 +1,17 @@
-pragma solidity 0.5.11;
+pragma solidity 0.6.6;
 
 import "../IKyberReserve.sol";
-import "../utils/Utils4.sol";
+import "../utils/Utils5.sol";
 import "../utils/zeppelin/SafeERC20.sol";
 
 
-contract MockReserve is IKyberReserve, Utils4 {
+contract MockReserve is IKyberReserve, Utils5 {
     using SafeERC20 for IERC20;
 
     mapping(address => uint256) public buyTokenRates;
     mapping(address => uint256) public sellTokenRates;
 
-    function() external payable {}
+    receive() external payable {}
 
     function setRate(
         IERC20 token,
@@ -29,7 +29,7 @@ contract MockReserve is IKyberReserve, Utils4 {
         address payable destAddress,
         uint256 conversionRate,
         bool validate
-    ) public payable returns (bool) {
+    ) public payable override virtual returns (bool) {
         validate;
         if (srcToken == ETH_TOKEN_ADDRESS) {
             require(msg.value == srcAmount, "ETH sent != srcAmount");
@@ -64,7 +64,7 @@ contract MockReserve is IKyberReserve, Utils4 {
         IERC20 dest,
         uint256 srcQty,
         uint256 blockNumber
-    ) public view returns (uint256) {
+    ) public view override returns (uint256) {
         blockNumber;
         uint256 rate;
         srcQty;

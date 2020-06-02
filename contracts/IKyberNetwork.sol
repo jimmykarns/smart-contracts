@@ -1,22 +1,21 @@
-pragma solidity 0.5.11;
+pragma solidity 0.6.6;
 
 import "./IERC20.sol";
 
 
 interface IKyberNetwork {
     event KyberTrade(
-        address indexed trader,
         IERC20 indexed src,
         IERC20 indexed dest,
-        uint256 srcAmount,
-        uint256 destAmount,
-        address destAddress,
         uint256 ethWeiValue,
         uint256 networkFeeWei,
         uint256 customPlatformFeeWei,
         bytes32[] t2eIds,
         bytes32[] e2tIds,
-        bytes hint
+        uint256[] t2eSrcAmounts,
+        uint256[] e2tSrcAmounts,
+        uint256[] t2eRates,
+        uint256[] e2tRates
     );
 
     function tradeWithHintAndFee(
@@ -32,6 +31,12 @@ interface IKyberNetwork {
         bytes calldata hint
     ) external payable returns (uint256 destAmount);
 
+    function listTokenForReserve(
+        address reserve,
+        IERC20 token,
+        bool add
+    ) external;
+
     function enabled() external view returns (bool);
 
     function getExpectedRateWithHintAndFee(
@@ -44,7 +49,6 @@ interface IKyberNetwork {
         external
         view
         returns (
-            uint256 expectedRateNoFees,
             uint256 expectedRateAfterNetworkFee,
             uint256 expectedRateAfterAllFees
         );

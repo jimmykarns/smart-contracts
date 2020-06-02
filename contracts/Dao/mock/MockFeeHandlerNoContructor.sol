@@ -1,14 +1,14 @@
-pragma solidity 0.5.11;
+pragma solidity 0.6.6;
 
-import "../../utils/Utils4.sol";
+import "../../utils/Utils5.sol";
 
 
-contract MockFeeHandlerNoContructor is Utils4 {
+contract MockFeeHandlerNoContructor is Utils5 {
     mapping(uint256 => uint256) public rewards;
 
     constructor() public {}
 
-    function() external payable {}
+    receive() external payable {}
 
     function setEpochReward(uint256 epoch) public payable {
         rewards[epoch] = msg.value;
@@ -18,7 +18,7 @@ contract MockFeeHandlerNoContructor is Utils4 {
         address payable staker,
         uint256 percentInPrecision,
         uint256 epoch
-    ) public returns (bool) {
+    ) public virtual returns (bool) {
         uint256 reward = rewards[epoch];
         uint256 rewardToClaim = (percentInPrecision * reward) / PRECISION;
         require(rewardToClaim <= address(this).balance);

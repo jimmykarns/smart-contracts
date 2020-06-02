@@ -1,4 +1,4 @@
-pragma solidity 0.5.11;
+pragma solidity 0.6.6;
 
 
 interface IKyberFeeHandler {
@@ -12,13 +12,15 @@ interface IKyberFeeHandler {
         uint256[] calldata rebatePercentages,
         address platformWallet,
         uint256 platformFeeWei
-    ) external payable returns (bool);
+    ) external payable;
 
     function claimReserveRebate(address rebateWallet) external returns (uint256);
+
+    function claimPlatformFee(address platformWallet) external returns (uint256);
 
     function claimStakerReward(
         address staker,
         uint256 percentageInPrecision,
         uint256 epoch
-    ) external returns (bool);
+    ) external returns(uint amountWei);
 }

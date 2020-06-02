@@ -1,7 +1,7 @@
-pragma solidity 0.5.11;
+pragma solidity 0.6.6;
 
 import "./utils/WithdrawableNoModifiers.sol";
-import "./utils/Utils4.sol";
+import "./utils/Utils5.sol";
 import "./utils/zeppelin/SafeERC20.sol";
 import "./IKyberNetwork.sol";
 import "./IKyberNetworkProxy.sol";
@@ -10,7 +10,7 @@ import "./IKyberHint.sol";
 
 
 /**
- *   @title Kyber Network proxy for network contract
+ *   @title kyberProxy for kyberNetwork contract
  *   The contract provides the following functions:
  *   - Get rates
  *   - Trade execution
@@ -21,15 +21,15 @@ contract KyberNetworkProxy is
     IKyberNetworkProxy,
     ISimpleKyberProxy,
     WithdrawableNoModifiers,
-    Utils4
+    Utils5
 {
     using SafeERC20 for IERC20;
 
     IKyberNetwork public kyberNetwork;
-    IKyberHint public hintHandler; // hint handler pointer for users.
+    IKyberHint public kyberHintHandler; // kyberHintHhandler pointer for users.
 
-    event KyberNetworkSet(IKyberNetwork newNetwork, IKyberNetwork oldNetwork);
-    event HintHandlerSet(IKyberHint hintHandler);
+    event KyberNetworkSet(IKyberNetwork newKyberNetwork, IKyberNetwork previousKyberNetwork);
+    event KyberHintHandlerSet(IKyberHint kyberHintHandler);
 
     constructor(address _admin) public WithdrawableNoModifiers(_admin) {
         /*empty body*/
@@ -44,7 +44,7 @@ contract KyberNetworkProxy is
     /// @param destAddress Address to send tokens to
     /// @param maxDestAmount A limit on the amount of dest tokens in twei
     /// @param minConversionRate The minimal conversion rate. If actual rate is lower, trade reverts
-    /// @param platformWallet Wallet address to receive a portion of the fees collected
+    /// @param platformWallet Platform wallet address for receiving fees
     /// @return Amount of actual dest tokens in twei
     function trade(
         IERC20 src,
@@ -54,7 +54,7 @@ contract KyberNetworkProxy is
         uint256 maxDestAmount,
         uint256 minConversionRate,
         address payable platformWallet
-    ) external payable returns (uint256) {
+    ) external payable override returns (uint256) {
         bytes memory hint;
 
         return
@@ -80,28 +80,28 @@ contract KyberNetworkProxy is
     /// @param destAddress Address to send tokens to
     /// @param maxDestAmount A limit on the amount of dest tokens in twei
     /// @param minConversionRate The minimal conversion rate. If actual rate is lower, trade reverts
-    /// @param walletId Wallet address to receive a portion of the fees collected
-    /// @param hint Defines which reserves should be used for the trade
+    /// @param walletId Platform wallet address for receiving fees
+    /// @param hint Advanced instructions for running the trade 
     /// @return Amount of actual dest tokens in twei
     function tradeWithHint(
         ERC20 src,
         uint256 srcAmount,
         ERC20 dest,
-        address destAddress,
+        address payable destAddress,
         uint256 maxDestAmount,
         uint256 minConversionRate,
-        address walletId,
+        address payable walletId,
         bytes calldata hint
-    ) external payable returns (uint256) {
+    ) external payable override returns (uint256) {
         return
             doTrade(
                 src,
                 srcAmount,
                 dest,
-                address(uint160(destAddress)),
+                destAddress,
                 maxDestAmount,
                 minConversionRate,
-                address(uint160(walletId)),
+                walletId,
                 0,
                 hint
             );
@@ -115,10 +115,10 @@ contract KyberNetworkProxy is
     /// @param destAddress Address to send tokens to
     /// @param maxDestAmount A limit on the amount of dest tokens in twei
     /// @param minConversionRate The minimal conversion rate. If actual rate is lower, trade reverts
-    /// @param platformWallet Wallet address to receive a portion of the fees collected
+    /// @param platformWallet Platform wallet address for receiving fees
     /// @param platformFeeBps Part of the trade that is allocated as fee to platform wallet. Ex: 10000 = 100%, 100 = 1%
-    /// @param hint Defines which reserves should be used for the trade
-    /// @return Amount of actual dest tokens in twei
+    /// @param hint Advanced instructions for running the trade 
+    /// @return destAmount Amount of actual dest tokens in twei
     function tradeWithHintAndFee(
         IERC20 src,
         uint256 srcAmount,
@@ -129,7 +129,7 @@ contract KyberNetworkProxy is
         address payable platformWallet,
         uint256 platformFeeBps,
         bytes calldata hint
-    ) external payable returns (uint256 destAmount) {
+    ) external payable override returns (uint256 destAmount) {
         return
             doTrade(
                 src,
@@ -155,7 +155,7 @@ contract KyberNetworkProxy is
         uint256 srcAmount,
         IERC20 dest,
         uint256 minConversionRate
-    ) external returns (uint256) {
+    ) external override returns (uint256) {
         bytes memory hint;
 
         return
@@ -172,13 +172,14 @@ contract KyberNetworkProxy is
             );
     }
 
-    /// @dev Trade from ether to token. Sends token to msg sender
+    /// @dev Trade from eth -> token. Sends token to msg sender
     /// @param token Destination token
     /// @param minConversionRate The minimal conversion rate. If actual rate is lower, trade reverts
     /// @return Amount of actual dest tokens in twei
     function swapEtherToToken(IERC20 token, uint256 minConversionRate)
         external
         payable
+        override
         returns (uint256)
     {
         bytes memory hint;
@@ -197,7 +198,7 @@ contract KyberNetworkProxy is
             );
     }
 
-    /// @dev Trade from token to ether. Sends ether to msg sender
+    /// @dev Trade from token -> eth. Sends eth to msg sender
     /// @param token Source token
     /// @param srcAmount Amount of src tokens in twei
     /// @param minConversionRate The minimal conversion rate. If actual rate is lower, trade reverts
@@ -206,7 +207,7 @@ contract KyberNetworkProxy is
         IERC20 token,
         uint256 srcAmount,
         uint256 minConversionRate
-    ) external returns (uint256) {
+    ) external override returns (uint256) {
         bytes memory hint;
 
         return
@@ -225,23 +226,23 @@ contract KyberNetworkProxy is
 
     function setKyberNetwork(IKyberNetwork _kyberNetwork) external {
         onlyAdmin();
-        require(_kyberNetwork != IKyberNetwork(0), "KyberNetwork 0");
+        require(_kyberNetwork != IKyberNetwork(0), "kyberNetwork 0");
         emit KyberNetworkSet(_kyberNetwork, kyberNetwork);
 
         kyberNetwork = _kyberNetwork;
     }
 
-    function setHintHandler(IKyberHint _hintHandler) external {
+    function setHintHandler(IKyberHint _kyberHintHandler) external {
         onlyAdmin();
-        require(_hintHandler != IKyberHint(0), "hintHandler 0");
-        emit HintHandlerSet(_hintHandler);
+        require(_kyberHintHandler != IKyberHint(0), "kyberHintHandler 0");
+        emit KyberHintHandlerSet(_kyberHintHandler);
 
-        hintHandler = _hintHandler;
+        kyberHintHandler = _kyberHintHandler;
     }
 
     /// @notice Backward compatible function
     /// @notice Use token address ETH_TOKEN_ADDRESS for ether
-    /// @dev Get expected rate for a trade from src to dest tokens, with amount srcQty
+    /// @dev Get expected rate for a trade from src to dest tokens, with amount srcQty (no platform fee)
     /// @param src Source token
     /// @param dest Destination token
     /// @param srcQty Amount of src tokens in twei
@@ -252,9 +253,9 @@ contract KyberNetworkProxy is
         ERC20 src,
         ERC20 dest,
         uint256 srcQty
-    ) external view returns (uint256 expectedRate, uint256 worstRate) {
+    ) external view override returns (uint256 expectedRate, uint256 worstRate) {
         bytes memory hint;
-        (, expectedRate, ) = kyberNetwork.getExpectedRateWithHintAndFee(
+        (expectedRate, ) = kyberNetwork.getExpectedRateWithHintAndFee(
             src,
             dest,
             srcQty,
@@ -266,12 +267,12 @@ contract KyberNetworkProxy is
     }
 
     /// @notice Use token address ETH_TOKEN_ADDRESS for ether
-    /// @dev Get expected rate for a trade from src to dest tokens, with amount srcQty and custom fee
+    /// @dev Get expected rate for a trade from src to dest tokens, amount srcQty and fees
     /// @param src Source token
     /// @param dest Destination token
     /// @param srcQty Amount of src tokens in twei
     /// @param platformFeeBps Part of the trade that is allocated as fee to platform wallet. Ex: 10000 = 100%, 100 = 1%
-    /// @param hint Defines which reserves should be used for the trade
+    /// @param hint Advanced instructions for running the trade 
     /// @return expectedRate for a trade after deducting network + platform fee
     ///             Rate = destQty (twei) / srcQty (twei) * 10 ** 18
     function getExpectedRateAfterFee(
@@ -280,31 +281,14 @@ contract KyberNetworkProxy is
         uint256 srcQty,
         uint256 platformFeeBps,
         bytes calldata hint
-    ) external view returns (uint256 expectedRate) {
-        (, , expectedRate) = kyberNetwork.getExpectedRateWithHintAndFee(
+    ) external view override returns (uint256 expectedRate) {
+        (, expectedRate) = kyberNetwork.getExpectedRateWithHintAndFee(
             src,
             dest,
             srcQty,
             platformFeeBps,
             hint
         );
-    }
-
-    /// @notice Use token address ETH_TOKEN_ADDRESS for ether
-    /// @dev Get expected rate for a trade from src to dest tokens, with amount srcQty
-    /// @param src Source token
-    /// @param dest Destination token
-    /// @param srcQty Amount of src tokens in twei
-    /// @param hint Defines which reserves should be used for the trade
-    /// @return priceNoFee for a trade without deducting any fees, network or platform fee
-    ///             Rate = destQty (twei) / srcQty (twei) * 10 ** 18
-    function getPriceDataNoFees(
-        IERC20 src,
-        IERC20 dest,
-        uint256 srcQty,
-        bytes calldata hint
-    ) external view returns (uint256 priceNoFee) {
-        (priceNoFee, , ) = kyberNetwork.getExpectedRateWithHintAndFee(src, dest, srcQty, 0, hint);
     }
 
     function maxGasPrice() external view returns (uint256) {
@@ -334,7 +318,7 @@ contract KyberNetworkProxy is
     ) internal returns (uint256) {
         UserBalance memory balanceBefore = prepareTrade(src, dest, srcAmount, destAddress);
 
-        uint256 reportedDestAmount = kyberNetwork.tradeWithHintAndFee.value(msg.value)(
+        uint256 reportedDestAmount = kyberNetwork.tradeWithHintAndFee{value: msg.value}(
             msg.sender,
             src,
             srcAmount,
@@ -356,7 +340,7 @@ contract KyberNetworkProxy is
 
         require(
             tradeOutcome.userDeltaDestToken == reportedDestAmount,
-            "network returned wrong amount"
+            "kyberNetwork returned wrong amount"
         );
         require(
             tradeOutcome.userDeltaDestToken <= maxDestAmount,
@@ -368,6 +352,7 @@ contract KyberNetworkProxy is
             msg.sender,
             src,
             dest,
+            destAddress,
             tradeOutcome.userDeltaSrcToken,
             tradeOutcome.userDeltaDestToken,
             platformWallet,
@@ -377,7 +362,7 @@ contract KyberNetworkProxy is
         return tradeOutcome.userDeltaDestToken;
     }
 
-    /// helper structur for function prepareTrade
+    /// helper structure for function prepareTrade
     struct TradeOutcome {
         uint256 userDeltaSrcToken;
         uint256 userDeltaDestToken;

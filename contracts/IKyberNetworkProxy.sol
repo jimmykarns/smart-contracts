@@ -1,4 +1,4 @@
-pragma solidity 0.5.11;
+pragma solidity 0.6.6;
 
 import "./IERC20.sol";
 
@@ -9,6 +9,7 @@ interface IKyberNetworkProxy {
         address indexed trader,
         IERC20 src,
         IERC20 dest,
+        address destAddress,
         uint256 actualSrcAmount,
         uint256 actualDestAmount,
         address platformWallet,
@@ -20,10 +21,10 @@ interface IKyberNetworkProxy {
         ERC20 src,
         uint256 srcAmount,
         ERC20 dest,
-        address destAddress,
+        address payable destAddress,
         uint256 maxDestAmount,
         uint256 minConversionRate,
-        address walletId,
+        address payable walletId,
         bytes calldata hint
     ) external payable returns (uint256);
 
@@ -50,6 +51,7 @@ interface IKyberNetworkProxy {
     ) external payable returns (uint256);
 
     /// @notice backward compatible
+    /// @notice Rate uints (10 ** 18) => destQty (twei) / srcQty (twei) * 10 ** 18
     function getExpectedRate(
         ERC20 src,
         ERC20 dest,
@@ -63,11 +65,4 @@ interface IKyberNetworkProxy {
         uint256 platformFeeBps,
         bytes calldata hint
     ) external view returns (uint256 expectedRate);
-
-    function getPriceDataNoFees(
-        IERC20 src,
-        IERC20 dest,
-        uint256 srcQty,
-        bytes calldata hint
-    ) external view returns (uint256 priceNoFee);
 }
