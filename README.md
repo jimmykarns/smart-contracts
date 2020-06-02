@@ -28,8 +28,7 @@ This specific branch is for mutation testing.
     ```
 7. Run 
     ```
-    vertigo run 
-    --network mutNet1 --exclude ./contracts/Dao --exclude ./contracts/mock --exclude ./contracts/utils/zeppelin --exclude ./contracts/wrappers --exclude ./contracts/Migrations.sol --output mutOutput.txt
+    vertigo run --network mutNet1 --exclude ./contracts/Dao --exclude ./contracts/mock --exclude ./contracts/utils/zeppelin --exclude ./contracts/wrappers --exclude ./contracts/Migrations.sol --output mutOutput.txt
     ```
 
 ## Notes

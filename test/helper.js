@@ -304,6 +304,20 @@ module.exports.calcRateFromQty = function(srcQty, dstQty, srcDecimals, dstDecima
     }
 }
 
+module.exports.advanceTime = async function (time) {
+  return new Promise((resolve, reject) => {
+    web3.currentProvider.send({
+      jsonrpc: '2.0',
+      method: 'evm_increaseTime',
+      params: [time],
+      id: new Date().getTime()
+    }, (err, result) => {
+      if (err) { return reject(err) }
+      return resolve(result)
+    })
+  })
+}
+
 module.exports.increaseBlockNumber = async function (blocks) {
     for (let id = 0; id < blocks; id++) {
         await time.advanceBlock();
