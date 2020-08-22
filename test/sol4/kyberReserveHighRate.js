@@ -4,7 +4,9 @@ const TestToken = artifacts.require("TestToken");
 const Reserve = artifacts.require("MockKyberReserveHighRate");
 const SanityRates = artifacts.require("SanityRates");
 
+ddEnhancedOpenData-deployment
 const Helper = require("./helper.js");
+master
 const BN = web3.utils.BN;
 
 //global variables
@@ -238,6 +240,7 @@ contract('KyberReserveHighRate', function(accounts) {
         }
     });
 
+ addEnhancedOpenData-deployment
     it("test MAX_RATE as expected for internal calcDstQty", async function() {
         const srcQty = new BN(5000);
         const decimals = 18;
@@ -246,17 +249,29 @@ contract('KyberReserveHighRate', function(accounts) {
         const expectedDstQty = Helper.calcDstQty(srcQty, decimals, decimals, rate);
 
         const rxDestQty = await reserveInst.MockCalcDstQty(srcQty, decimals, decimals, rate);
+
+    it("test MAX_RATE as expected for internal calcDstQty, decimals 11, 17", async function() {
+        const srcQty = new BN(5000);
+        const decimals1 = 11;
+        const decimals2 = 17;
+        let rate = MAX_RATE;
+
+        const expectedDstQty = Helper.calcDstQty(srcQty, decimals1, decimals2, rate);
+
+        const rxDestQty = await reserveInst.MockCalcDstQty(srcQty, decimals1, decimals2, rate);
+master
         Helper.assertEqual(expectedDstQty, rxDestQty);
 
         rate = MAX_RATE.add(new BN(1));
         try {
-            await reserveInst.MockCalcDstQty(srcQty, decimals, decimals, rate);
+
             assert(false,  "shouldn't reach this line. expected line above to throw.")
         } catch(e) {
             assert(Helper.isRevertErrorMessage(e), "expected throw but got: " + e);
         }
     });
 
+ addEnhancedOpenData-deployment
     it("test MAX_RATE as expected for internal calcSrcQty", async function() {
         const dstQty = new BN(50000000000);
         const decimals = 18;
@@ -265,17 +280,61 @@ contract('KyberReserveHighRate', function(accounts) {
         const expectedSrcQty = Helper.calcSrcQty(dstQty, decimals, decimals, rate);
 
         const rxSrcQty = await reserveInst.MockCalcSrcQty(dstQty, decimals, decimals, rate);
+
+    it("test MAX_RATE as expected for internal calcSrcQty, decimals 17, 18", async function() {
+        const dstQty = new BN(50000000000);
+        const decimals1 = 17;
+        const decimals2 = 18;
+
+        let rate = MAX_RATE;
+
+        const expectedSrcQty = Helper.calcSrcQty(dstQty, decimals1, decimals2, rate);
+
+        const rxSrcQty = await reserveInst.MockCalcSrcQty(dstQty, decimals1, decimals2, rate);
+ master
         Helper.assertEqual(expectedSrcQty, rxSrcQty);
 
         rate = MAX_RATE.add(new BN(1));
         try {
+ addEnhancedOpenData-deployment
             await reserveInst.MockCalcSrcQty(dstQty, decimals, decimals, rate);
+
+            await reserveInst.MockCalcSrcQty(dstQty, decimals1, decimals2, rate);
+ master
             assert(false,  "shouldn't reach this line. expected line above to throw.")
         } catch(e) {
             assert(Helper.isRevertErrorMessage(e), "expected throw but got: " + e);
         }
     });
 
+ addEnhancedOpenData-deployment
+
+    it("test MAX_RATE as expected for internal calcDstQty, decimals 16, 9", async function() {
+        const srcQty = new BN("39458304598");
+        const decimals1 = 16;
+        const decimals2 = 9;
+        let rate = new BN("23049820349820934");
+
+        const expectedDstQty = Helper.calcDstQty(srcQty, decimals1, decimals2, rate);
+
+        const rxDestQty = await reserveInst.MockCalcDstQty(srcQty, decimals1, decimals2, rate);
+        Helper.assertEqual(expectedDstQty, rxDestQty);
+    });
+
+    it("test internal calcSrcQty, decimals 17, 8", async function() {
+        const dstQty = new BN("52304958340");
+        const decimals1 = 17;
+        const decimals2 = 8;
+
+        let rate = new BN("92873498374594387");
+
+        const expectedSrcQty = Helper.calcSrcQty(dstQty, decimals1, decimals2, rate);
+
+        const rxSrcQty = await reserveInst.MockCalcSrcQty(dstQty, decimals1, decimals2, rate);
+        Helper.assertEqual(expectedSrcQty, rxSrcQty);
+    });
+
+ master
     it("should perform small buy (no steps) and check: balances changed, rate is expected rate.", async function () {
         let tokenInd = 3;
         let token = tokens[tokenInd]; //choose some token
