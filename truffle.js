@@ -1,9 +1,6 @@
 module.exports = {
   solc: {
-    optimizer: {
-      enabled: true,
-      runs: 200
-    }
+    optimizer: require("./solcOptimiserSettings.js")
   },
   networks: {
     development: {
@@ -27,5 +24,8 @@ module.exports = {
       network_id: 4,
       gas: 4612388 // Gas limit used for deploys
     }
+  },
+  mocha: {
+      enableTimeouts: false
   }
 };
