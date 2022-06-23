@@ -45,7 +45,7 @@
     "@uniswap/v2-periphery": "1.1.0-beta.0",
     "chai": "4.2.0",
     "chai-bn": "0.2.0",
-    "got": "^11.1.0",
+    "got": "^11.8.5",
     "mv": "2.1.1",
     "prettier": "2.0.4",
     "prettier-plugin-solidity": "1.0.0-alpha.54",
